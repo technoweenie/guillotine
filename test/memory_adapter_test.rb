@@ -1,8 +1,8 @@
 require File.expand_path('../helper', __FILE__)
 
-class MemoryAdapterTest < Gitio::TestCase
+class MemoryAdapterTest < Guillotine::TestCase
   def setup
-    @db = Gitio::Adapters::MemoryAdapter.new
+    @db = Guillotine::Adapters::MemoryAdapter.new
   end
 
   def test_adding_a_link_returns_code

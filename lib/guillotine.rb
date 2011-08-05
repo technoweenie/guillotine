@@ -1,14 +1,14 @@
 require 'base64'
 require 'digest/md5'
 
-module Gitio
+module Guillotine
   VERSION = "0.0.1"
 
-  dir = File.expand_path '../gitio', __FILE__
+  dir = File.expand_path '../guillotine', __FILE__
   autoload :App, "#{dir}/app"
 
   module Adapters
-    dir = File.expand_path '../gitio/adapters', __FILE__
+    dir = File.expand_path '../guillotine/adapters', __FILE__
     autoload :MemoryAdapter, "#{dir}/memory_adapter"
     autoload :SequelAdapter, "#{dir}/sequel_adapter"
 

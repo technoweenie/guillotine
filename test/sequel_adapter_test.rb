@@ -1,8 +1,8 @@
 require File.expand_path('../helper', __FILE__)
 require 'sequel'
 
-class SequelAdapterTest < Gitio::TestCase
-  ADAPTER = Gitio::Adapters::SequelAdapter.new Sequel.sqlite
+class SequelAdapterTest < Guillotine::TestCase
+  ADAPTER = Guillotine::Adapters::SequelAdapter.new Sequel.sqlite
   ADAPTER.setup
 
   def setup

@@ -1,4 +1,4 @@
-module Gitio
+module Guillotine
   module Adapters
     # Stores shortened URLs in memory.  Totally scales.
     class MemoryAdapter < Adapter

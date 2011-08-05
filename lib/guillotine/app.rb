@@ -1,6 +1,6 @@
 require 'sinatra/base'
 
-module Gitio
+module Guillotine
   class App < Sinatra::Base
     get "/:code" do
       code = params[:code]

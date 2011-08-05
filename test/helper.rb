@@ -1,6 +1,6 @@
 require 'test/unit'
-require File.expand_path('../../lib/gitio', __FILE__)
+require File.expand_path('../../lib/guillotine', __FILE__)
 require 'rack/test'
 
-class Gitio::TestCase < Test::Unit::TestCase
+class Guillotine::TestCase < Test::Unit::TestCase
 end

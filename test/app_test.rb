@@ -1,8 +1,8 @@
 require File.expand_path('../helper', __FILE__)
 
-class AppTest < Gitio::TestCase
-  ADAPTER = Gitio::Adapters::MemoryAdapter.new
-  Gitio::App.set :db, ADAPTER
+class AppTest < Guillotine::TestCase
+  ADAPTER = Guillotine::Adapters::MemoryAdapter.new
+  Guillotine::App.set :db, ADAPTER
 
   include Rack::Test::Methods
 
@@ -27,6 +27,6 @@ class AppTest < Gitio::TestCase
   end
 
   def app
-    Gitio::App
+    Guillotine::App
   end
 end

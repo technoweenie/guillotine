@@ -1,4 +1,4 @@
-module Gitio
+module Guillotine
   module Adapters
     class SequelAdapter < Adapter
       def initialize(db)
