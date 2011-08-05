@@ -24,8 +24,11 @@ module Gitio
 
       def setup
         @db.create_table :urls do
-          string :url,  :unique => true
-          string :code, :unique => true
+          string :url
+          string :code
+
+          unique :url
+          unique :code
         end
       end
     end
