@@ -10,6 +10,7 @@ module Gitio
   module Adapters
     dir = File.expand_path '../gitio/adapters', __FILE__
     autoload :MemoryAdapter, "#{dir}/memory_adapter"
+    autoload :SequelAdapter, "#{dir}/sequel_adapter"
 
     # Adapters handle the storage and retrieval of URLs in the system.  You can
     # use whatever you want, as long as it implements the #add and #find

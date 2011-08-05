@@ -6,3 +6,7 @@ group :test do
   gem 'rack-test'
 end
 
+group :sequel do
+  gem 'sequel'
+end
+
