@@ -2,8 +2,6 @@ require 'sinatra/base'
 
 module Gitio
   class App < Sinatra::Base
-    set :db, Adapters::MemoryAdapter.new
-
     get "/:code" do
       code = params[:code]
       if url = settings.db.find(code)
