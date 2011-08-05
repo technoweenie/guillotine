@@ -1,6 +1,6 @@
 require File.expand_path('../helper', __FILE__)
 
-class MemoryAdapterTest < Test::Unit::TestCase
+class MemoryAdapterTest < Gitio::TestCase
   def setup
     @db = Gitio::Adapters::MemoryAdapter.new
   end

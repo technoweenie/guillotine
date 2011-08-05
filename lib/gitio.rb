@@ -4,6 +4,9 @@ require 'digest/md5'
 module Gitio
   VERSION = "0.0.1"
 
+  dir = File.expand_path '../gitio', __FILE__
+  autoload :App, "#{dir}/app"
+
   module Adapters
     dir = File.expand_path '../gitio/adapters', __FILE__
     autoload :MemoryAdapter, "#{dir}/memory_adapter"
