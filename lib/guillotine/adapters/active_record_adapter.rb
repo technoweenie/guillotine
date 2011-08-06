@@ -1,6 +1,6 @@
 require 'active_record'
 
-module Gitio
+module Guillotine
   module Adapters
     class ActiveRecordAdapter < Adapter
       class Url < ActiveRecord::Base; end
