@@ -6,6 +6,12 @@ module Guillotine
         @table = @db[:urls]
       end
       
+      # Public: Stores the shortened version of a URL.
+      # 
+      # url - The String URL to shorten and store.
+      #
+      # Returns the unique String code for the URL.  If the URL is added
+      # multiple times, this should return the same code.
       def add(url)
         if row = @table.select(:code).where(:url => url).first
           row[:code]
@@ -16,6 +22,11 @@ module Guillotine
         end
       end
 
+      # Public: Retrieves a URL from the code.
+      #
+      # code - The String code to lookup the URL.
+      #
+      # Returns the String URL.
       def find(code)
         if row = @table.select(:url).where(:code => code).first
           row[:url]
