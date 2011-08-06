@@ -14,3 +14,11 @@ group :sequel do
   gem 'sequel'
 end
 
+group :active_record do
+  gem 'activerecord'
+end
+
+group :sequel, :active_record do
+  gem 'sqlite3'
+end
+

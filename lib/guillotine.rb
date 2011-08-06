@@ -9,9 +9,10 @@ module Guillotine
 
   module Adapters
     dir = File.expand_path '../guillotine/adapters', __FILE__
-    autoload :MemoryAdapter, "#{dir}/memory_adapter"
-    autoload :SequelAdapter, "#{dir}/sequel_adapter"
-    autoload :RiakAdapter,   "#{dir}/riak_adapter"
+    autoload :MemoryAdapter,       "#{dir}/memory_adapter"
+    autoload :SequelAdapter,       "#{dir}/sequel_adapter"
+    autoload :RiakAdapter,         "#{dir}/riak_adapter"
+    autoload :ActiveRecordAdapter, "#{dir}/active_record_adapter"
 
     # Adapters handle the storage and retrieval of URLs in the system.  You can
     # use whatever you want, as long as it implements the #add and #find
