@@ -20,8 +20,11 @@ module Guillotine
         sha      = Digest::SHA1.hexdigest url
         url_obj  = @bucket.get_or_new sha, :r => 1
         url_obj.data || begin
-          code          = shorten url
-          code_obj      = @bucket.new code
+          code        ||= shorten url
+          code_obj      = @bucket.get_or_new code
+          if existing_url = code_obj.data # key exists
+            raise DuplicateCodeError, existing_url, url, code if existing_url != url
+          end
           code_obj.content_type = url_obj.content_type = 'text/plain'
           code_obj.data = url
           url_obj.data  = code

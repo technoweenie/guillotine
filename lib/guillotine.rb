@@ -7,6 +7,17 @@ module Guillotine
   dir = File.expand_path '../guillotine', __FILE__
   autoload :App, "#{dir}/app"
 
+  class DuplicateCodeError < StandardError
+    attr_reader :existing_url, :new_url, :code
+
+    def initialize(existing_url, new_url, code)
+      @existing_url = existing_url
+      @new_url      = new_url
+      @code         = code
+      super "#{@new_url.inspect} was supposed to be shortened to #{@code.inspect}, but #{@existing_url.inspect} already is!"
+    end
+  end
+
   module Adapters
     dir = File.expand_path '../guillotine/adapters', __FILE__
     autoload :MemoryAdapter,       "#{dir}/memory_adapter"

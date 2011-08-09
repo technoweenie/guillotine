@@ -19,6 +19,11 @@ begin
       code = @db.add 'abc'
       assert_equal code, @db.add('abc')
     end
+
+    def test_adds_url_with_custom_code
+      assert_equal 'code', @db.add('def', 'code')
+      assert_equal 'def', @db.find('code')
+    end
   end
 rescue LoadError
   puts "Skipping sequel tests"

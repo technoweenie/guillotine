@@ -33,6 +33,14 @@ begin
       BUCKET.delete Digest::SHA1.hexdigest('abc')
       BUCKET.delete code
     end
+
+    def test_adds_url_with_custom_code
+      assert_equal 'code', @db.add('def', 'code')
+      assert_equal 'def', @db.find('code')
+
+      BUCKET.delete Digest::SHA1.hexdigest('def')
+      BUCKET.delete 'code'
+    end
   end
 rescue LoadError
   puts "Skipping Riak tests: #{$!}"
