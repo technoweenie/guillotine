@@ -9,11 +9,18 @@ module Guillotine
         Url.establish_connection config
       end
       
-      def add(url)
+      # Public: Stores the shortened version of a URL.
+      # 
+      # url  - The String URL to shorten and store.
+      # code - Optional String code for the URL.
+      #
+      # Returns the unique String code for the URL.  If the URL is added
+      # multiple times, this should return the same code.
+      def add(url, code = nil)
         if row = Url.select(:code).where(:url => url).first
           row[:code]
         else
-          code = shorten url
+          code ||= shorten url
           Url.create :url => url, :code => code
           code
         end
@@ -25,6 +32,11 @@ module Guillotine
         end
       end
 
+      # Public: Retrieves a URL from the code.
+      #
+      # code - The String code to lookup the URL.
+      #
+      # Returns the String URL.
       def setup
         Url.connection.create_table :urls do |t|
           t.string :url, :unique => true

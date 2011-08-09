@@ -11,11 +11,12 @@ module Guillotine
 
       # Public: Stores the shortened version of a URL.
       # 
-      # url - The String URL to shorten and store.
+      # url  - The String URL to shorten and store.
+      # code - Optional String code for the URL.
       #
       # Returns the unique String code for the URL.  If the URL is added
       # multiple times, this should return the same code.
-      def add(url)
+      def add(url, code = nil)
         sha      = Digest::SHA1.hexdigest url
         url_obj  = @bucket.get_or_new sha, :r => 1
         url_obj.data || begin

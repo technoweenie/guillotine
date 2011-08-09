@@ -9,15 +9,16 @@ module Guillotine
 
       # Public: Stores the shortened version of a URL.
       # 
-      # url - The String URL to shorten and store.
+      # url  - The String URL to shorten and store.
+      # code - Optional String code for the URL.
       #
       # Returns the unique String code for the URL.  If the URL is added
       # multiple times, this should return the same code.
-      def add(url)
-        if code = @urls[url]
-          code
+      def add(url, code = nil)
+        if existing_code = @urls[url]
+          existing_code
         else
-          code = shorten(url)
+          code ||= shorten(url)
           @hash[code] = url
           @urls[url]  = code
           code
