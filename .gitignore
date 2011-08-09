@@ -2,3 +2,4 @@ vendor/*
 bin/*
 .bundle/*
 Gemfile.lock
+pkg/
