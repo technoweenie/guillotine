@@ -21,7 +21,13 @@ module Guillotine
           row[:code]
         else
           code ||= shorten url
-          Url.create :url => url, :code => code
+          begin
+            Url.create :url => url, :code => code
+          rescue ActiveRecord::RecordNotUnique
+            row = Url.select(:url).where(:code => code).first
+            existing_url = row && row[:url]
+            raise DuplicateCodeError.new(existing_url, url, code)
+          end
           code
         end
       end
@@ -38,10 +44,14 @@ module Guillotine
       end
 
       def setup
-        Url.connection.create_table :urls do |t|
-          t.string :url, :unique => true
-          t.string :code, :unique => true
+        conn = Url.connection
+        conn.create_table :urls do |t|
+          t.string :url
+          t.string :code
         end
+
+        conn.add_index :urls, :url, :unique => true
+        conn.add_index :urls, :code, :unique => true
       end
     end
   end

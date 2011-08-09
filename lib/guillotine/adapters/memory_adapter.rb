@@ -20,7 +20,7 @@ module Guillotine
         else
           code ||= shorten(url)
           if existing_url = @hash[code]
-            raise DuplicateCodeError, existing_url, url, code
+            raise DuplicateCodeError.new(existing_url, url, code) if url != existing_url
           end
           @hash[code] = url
           @urls[url]  = code

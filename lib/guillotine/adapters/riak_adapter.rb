@@ -23,7 +23,7 @@ module Guillotine
           code        ||= shorten url
           code_obj      = @bucket.get_or_new code
           if existing_url = code_obj.data # key exists
-            raise DuplicateCodeError, existing_url, url, code if existing_url != url
+            raise DuplicateCodeError.new(existing_url, url, code) if existing_url != url
           end
           code_obj.content_type = url_obj.content_type = 'text/plain'
           code_obj.data = url

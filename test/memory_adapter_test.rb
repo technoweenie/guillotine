@@ -19,4 +19,11 @@ class MemoryAdapterTest < Guillotine::TestCase
     assert_equal 'code', @db.add('def', 'code')
     assert_equal 'def', @db.find('code')
   end
+
+  def test_clashing_urls_raises_error
+    code = @db.add 'abc'
+    assert_raises Guillotine::DuplicateCodeError do
+      @db.add 'def', code
+    end
+  end
 end

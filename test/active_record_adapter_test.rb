@@ -24,6 +24,13 @@ begin
       assert_equal 'code', @db.add('def', 'code')
       assert_equal 'def', @db.find('code')
     end
+
+    def test_clashing_urls_raises_error
+      code = @db.add '123'
+      assert_raises Guillotine::DuplicateCodeError do
+        code = @db.add '456', code
+      end
+    end
   end
 rescue LoadError
   puts "skipping ActiveRecord tests: #{$!}"

@@ -18,7 +18,15 @@ module Guillotine
           row[:code]
         else
           code ||= shorten url
-          @table << {:url => url, :code => code}
+          begin
+            @table << {:url => url, :code => code}
+          rescue Sequel::DatabaseError
+            if existing_url = @table.select(:url).where(:code => code).first
+              raise DuplicateCodeError.new(existing_url, url, code)
+            else
+              raise
+            end
+          end
           code
         end
       end

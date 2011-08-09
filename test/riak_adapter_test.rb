@@ -41,6 +41,17 @@ begin
       BUCKET.delete Digest::SHA1.hexdigest('def')
       BUCKET.delete 'code'
     end
+
+    def test_clashing_urls_raises_error
+      code = @db.add 'abc'
+      assert_raises Guillotine::DuplicateCodeError do
+        @db.add 'def', code
+      end
+
+      BUCKET.delete Digest::SHA1.hexdigest('abc')
+      BUCKET.delete Digest::SHA1.hexdigest('def')
+      BUCKET.delete code
+    end
   end
 rescue LoadError
   puts "Skipping Riak tests: #{$!}"
