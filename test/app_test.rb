@@ -26,6 +26,23 @@ class AppTest < Guillotine::TestCase
     assert_equal code, code_url.gsub(/.*\//, '')
   end
 
+  def test_adds_url_with_custom_code
+    url = 'http://github.com/abc'
+    post '/', :url => url, :code => 'code'
+    assert code_url = last_response.headers['Location']
+    assert_match /\/code$/, code_url
+
+    get "/code"
+    assert_equal 302, last_response.status
+    assert_equal url, last_response.headers['Location']
+  end
+
+  def test_clashing_urls_raises_error
+    code = ADAPTER.add '123'
+    post '/', :url => '456', :code => code
+    assert_equal 422, last_response.status
+  end
+
   def app
     Guillotine::App
   end

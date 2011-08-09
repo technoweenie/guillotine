@@ -12,11 +12,16 @@ module Guillotine
     end
 
     post "/" do
-      url = params[:url]
-      if code = settings.db.add(url)
-        redirect code
-      else
-        halt 500, "Unable to shorten #{url}"
+      url  = params[:url]
+      code = params[:code]
+      begin
+        if code = settings.db.add(url, code)
+          redirect code
+        else
+          halt 422, "Unable to shorten #{url}"
+        end
+      rescue Guillotine::DuplicateCodeError => err
+        halt 422, err.to_s
       end
     end
   end
