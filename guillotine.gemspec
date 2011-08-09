@@ -12,10 +12,10 @@ Gem::Specification.new do |s|
   ## Leave these as is they will be modified for you by the rake gemspec task.
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
-  s.name              = 'NAME'
-  s.version           = '0.0'
-  s.date              = '2010-01-01'
-  s.rubyforge_project = 'NAME'
+  s.name              = 'guillotine'
+  s.version           = '0.0.1'
+  s.date              = '2011-08-08'
+  s.rubyforge_project = 'guillotine'
 
   ## Make sure your summary is short. The description may be as long
   ## as you like.
@@ -45,7 +45,25 @@ Gem::Specification.new do |s|
   ## contents of your Git repository via the gemspec task. DO NOT REMOVE
   ## THE MANIFEST COMMENTS, they are used as delimiters by the task.
   # = MANIFEST =
-  s.files = %w[]
+  s.files = %w[
+    Gemfile
+    LICENSE
+    Rakefile
+    config/haproxy.riak.cfg
+    guillotine.gemspec
+    lib/guillotine.rb
+    lib/guillotine/adapters/active_record_adapter.rb
+    lib/guillotine/adapters/memory_adapter.rb
+    lib/guillotine/adapters/riak_adapter.rb
+    lib/guillotine/adapters/sequel_adapter.rb
+    lib/guillotine/app.rb
+    test/active_record_adapter_test.rb
+    test/app_test.rb
+    test/helper.rb
+    test/memory_adapter_test.rb
+    test/riak_adapter_test.rb
+    test/sequel_adapter_test.rb
+  ]
   # = MANIFEST =
 
   ## Test files will be grabbed from the file list. Make sure the path glob
