@@ -26,17 +26,17 @@ module Guillotine
         end
       end
 
+      # Public: Retrieves a URL from the code.
+      #
+      # code - The String code to lookup the URL.
+      #
+      # Returns the String URL.
       def find(code)
         if row = Url.select(:url).where(:code => code).first
           row[:url]
         end
       end
 
-      # Public: Retrieves a URL from the code.
-      #
-      # code - The String code to lookup the URL.
-      #
-      # Returns the String URL.
       def setup
         Url.connection.create_table :urls do |t|
           t.string :url, :unique => true
