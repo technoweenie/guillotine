@@ -4,9 +4,14 @@ module Guillotine
   module Adapters
     # Stores shortened URLs in Riak.  Totally scales.
     class RiakAdapter < Adapter
-      def initialize(bucket)
-        @bucket = bucket
-        @client = bucket.client
+      # Initializes the adapter.
+      #
+      # code_bucket - The Riak::Bucket for all code keys.
+      # url_bucket  - The Riak::Bucket for all url keys.  If this is not
+      #               given, the code bucket is used for all keys.
+      def initialize(code_bucket, url_bucket = nil)
+        @code_bucket = code_bucket
+        @url_bucket  = url_bucket || @code_bucket
       end
 
       # Public: Stores the shortened version of a URL.
@@ -18,10 +23,10 @@ module Guillotine
       # multiple times, this should return the same code.
       def add(url, code = nil)
         sha      = Digest::SHA1.hexdigest url
-        url_obj  = @bucket.get_or_new sha, :r => 1
+        url_obj  = @url_bucket.get_or_new sha, :r => 1
         url_obj.data || begin
           code        ||= shorten url
-          code_obj      = @bucket.get_or_new code
+          code_obj      = @code_bucket.get_or_new code
           if existing_url = code_obj.data # key exists
             raise DuplicateCodeError.new(existing_url, url, code) if existing_url != url
           end
@@ -40,7 +45,7 @@ module Guillotine
       #
       # Returns the String URL.
       def find(code)
-        if obj = @bucket.get(code, :r => 1)
+        if obj = @code_bucket.get(code, :r => 1)
           obj.data
         end
       end

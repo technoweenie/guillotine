@@ -11,8 +11,10 @@ begin
   #
   #   http://localhost:8091/riak/guillotine-test
   class RiakAdapterTest < Guillotine::TestCase
-    BUCKET  = Riak::Client.new(:http_port => 8091)['guillotine-test']
-    ADAPTER = Guillotine::Adapters::RiakAdapter.new BUCKET
+    client      = Riak::Client.new(:http_port => 8091)
+    CODE_BUCKET = client['guillotine-code-test']
+    URL_BUCKET  = client['guillotine-url-test']
+    ADAPTER = Guillotine::Adapters::RiakAdapter.new CODE_BUCKET, URL_BUCKET
 
     def setup
       @db = ADAPTER
@@ -22,24 +24,24 @@ begin
       code = @db.add 'abc'
       assert_equal 'abc', @db.find(code)
 
-      BUCKET.delete Digest::SHA1.hexdigest('abc')
-      BUCKET.delete code
+      URL_BUCKET.delete Digest::SHA1.hexdigest('abc')
+      CODE_BUCKET.delete code
     end
 
     def test_adding_duplicate_link_returns_same_code
       code = @db.add 'abc'
       assert_equal code, @db.add('abc')
 
-      BUCKET.delete Digest::SHA1.hexdigest('abc')
-      BUCKET.delete code
+      URL_BUCKET.delete Digest::SHA1.hexdigest('abc')
+      CODE_BUCKET.delete code
     end
 
     def test_adds_url_with_custom_code
       assert_equal 'code', @db.add('def', 'code')
       assert_equal 'def', @db.find('code')
 
-      BUCKET.delete Digest::SHA1.hexdigest('def')
-      BUCKET.delete 'code'
+      URL_BUCKET.delete Digest::SHA1.hexdigest('def')
+      CODE_BUCKET.delete 'code'
     end
 
     def test_clashing_urls_raises_error
@@ -48,9 +50,9 @@ begin
         @db.add 'def', code
       end
 
-      BUCKET.delete Digest::SHA1.hexdigest('abc')
-      BUCKET.delete Digest::SHA1.hexdigest('def')
-      BUCKET.delete code
+      URL_BUCKET.delete Digest::SHA1.hexdigest('abc')
+      URL_BUCKET.delete Digest::SHA1.hexdigest('def')
+      CODE_BUCKET.delete code
     end
   end
 rescue LoadError
