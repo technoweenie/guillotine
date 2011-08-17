@@ -70,6 +70,21 @@ class AppTest < Guillotine::TestCase
     Guillotine::App.set :required_host, nil
   end
 
+  def test_reject_shortened_url_from_other_domain_by_regex
+    Guillotine::App.set :required_host, /abc\.com$/
+    post '/', :url => 'http://github.com'
+    assert_equal 422, last_response.status
+    assert_match /must match \/abc\\.com/, last_response.body
+
+    post '/', :url => 'http://abc.com/def'
+    assert_equal 302, last_response.status
+
+    post '/', :url => 'http://www.abc.com/def'
+    assert_equal 302, last_response.status
+  ensure
+    Guillotine::App.set :required_host, nil
+  end
+
   def app
     Guillotine::App
   end

@@ -22,8 +22,15 @@ module Guillotine
         halt 422, "Invalid url: #{url}"
       end
 
-      if settings.required_host && url.host != settings.required_host
-        halt 422, "URL must be from #{settings.required_host}"
+      case settings.required_host
+      when String
+        if url.host != settings.required_host
+          halt 422, "URL must be from #{settings.required_host}"
+        end
+      when Regexp
+        if url.host.to_s !~ settings.required_host
+          halt 422, "URL must match #{settings.required_host.inspect}"
+        end
       end
 
       begin
