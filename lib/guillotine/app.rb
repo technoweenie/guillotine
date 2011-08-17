@@ -1,7 +1,10 @@
 require 'sinatra/base'
+require 'addressable/uri'
 
 module Guillotine
   class App < Sinatra::Base
+    set :required_host, nil
+
     get "/:code" do
       code = params[:code]
       if url = settings.db.find(code)
@@ -12,16 +15,19 @@ module Guillotine
     end
 
     post "/" do
-      url  = params[:url].to_s
+      url  = Addressable::URI.parse params[:url]
       code = params[:code]
 
-      if url.empty?
-        halt 422, "Invalid url: #{url.inspect}"
+      if !(url && url.scheme =~ /^https?$/)
+        halt 422, "Invalid url: #{url}"
       end
-      url.strip!
+
+      if settings.required_host && url.host != settings.required_host
+        halt 422, "URL must be from #{settings.required_host}"
+      end
 
       begin
-        if code = settings.db.add(url, code)
+        if code = settings.db.add(url.to_s.strip, code)
           redirect code
         else
           halt 422, "Unable to shorten #{url}"

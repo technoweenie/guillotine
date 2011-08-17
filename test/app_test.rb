@@ -38,8 +38,8 @@ class AppTest < Guillotine::TestCase
   end
 
   def test_clashing_urls_raises_error
-    code = ADAPTER.add '123'
-    post '/', :url => '456', :code => code
+    code = ADAPTER.add 'http://github.com/123'
+    post '/', :url => 'http://github.com/456', :code => code
     assert_equal 422, last_response.status
   end
 
@@ -51,6 +51,23 @@ class AppTest < Guillotine::TestCase
   def test_add_url_with_linebreak
     post '/', :url => "https://abc.com\n"
     assert_equal 'http://example.org/SWtBvQ', last_response.headers['location']
+  end
+
+  def test_rejects_non_http_urls
+    post '/', :url => 'ftp://abc.com'
+    assert_equal 422, last_response.status
+  end
+
+  def test_reject_shortened_url_from_other_domain
+    Guillotine::App.set :required_host, 'abc.com'
+    post '/', :url => 'http://github.com'
+    assert_equal 422, last_response.status
+    assert_match /must be from abc\.com/, last_response.body
+
+    post '/', :url => 'http://abc.com/def'
+    assert_equal 302, last_response.status
+  ensure
+    Guillotine::App.set :required_host, nil
   end
 
   def app
