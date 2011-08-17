@@ -43,6 +43,11 @@ class AppTest < Guillotine::TestCase
     assert_equal 422, last_response.status
   end
 
+  def test_add_without_url
+    post '/'
+    assert_equal 422, last_response.status
+  end
+
   def app
     Guillotine::App
   end

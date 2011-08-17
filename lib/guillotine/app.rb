@@ -12,8 +12,13 @@ module Guillotine
     end
 
     post "/" do
-      url  = params[:url]
+      url  = params[:url].to_s
       code = params[:code]
+
+      if url.empty?
+        halt 422, "Invalid url: #{url.inspect}"
+      end
+
       begin
         if code = settings.db.add(url, code)
           redirect code
