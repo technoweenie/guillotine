@@ -4,6 +4,8 @@ module Guillotine
   module Adapters
     # Stores shortened URLs in Riak.  Totally scales.
     class RiakAdapter < Adapter
+      attr_reader :code_bucket, :url_bucket
+
       # Initializes the adapter.
       #
       # code_bucket - The Riak::Bucket for all code keys.
