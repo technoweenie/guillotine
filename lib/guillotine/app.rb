@@ -18,6 +18,7 @@ module Guillotine
       if url.empty?
         halt 422, "Invalid url: #{url.inspect}"
       end
+      url.strip!
 
       begin
         if code = settings.db.add(url, code)
