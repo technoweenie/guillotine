@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'guillotine'
-  s.version           = '0.1.0'
+  s.version           = '0.1.1'
   s.date              = '2011-08-17'
   s.rubyforge_project = 'guillotine'
 
@@ -36,6 +36,7 @@ Gem::Specification.new do |s|
   ## List your runtime dependencies here. Runtime dependencies are those
   ## that are needed for an end user to actually USE your code.
   s.add_dependency('sinatra', "~> 1.2.6")
+  s.add_dependency('addressable', "~> 2.2.6")
 
   ## List your development dependencies here. Development dependencies are
   ## those that are only needed during development
