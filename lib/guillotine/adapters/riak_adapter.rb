@@ -50,6 +50,8 @@ module Guillotine
         if obj = @code_bucket.get(code, :r => 1)
           obj.data
         end
+      rescue Riak::FailedRequest => err
+        raise unless err.not_found?
       end
     end
   end

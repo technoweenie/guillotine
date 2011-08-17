@@ -31,6 +31,10 @@ begin
         code = @db.add '456', code
       end
     end
+
+    def test_missing_code
+      assert_nil @db.find('missing')
+    end
   end
 rescue LoadError
   puts "Skipping sequel tests"

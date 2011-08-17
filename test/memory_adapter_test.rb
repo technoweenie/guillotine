@@ -26,4 +26,8 @@ class MemoryAdapterTest < Guillotine::TestCase
       @db.add 'def', code
     end
   end
+
+  def test_missing_code
+    assert_nil @db.find('missing')
+  end
 end

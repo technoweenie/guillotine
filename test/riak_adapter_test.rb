@@ -54,6 +54,10 @@ begin
       URL_BUCKET.delete Digest::SHA1.hexdigest('def')
       CODE_BUCKET.delete code
     end
+
+    def test_missing_code
+      assert_nil @db.find('missing')
+    end
   end
 rescue LoadError
   puts "Skipping Riak tests: #{$!}"
