@@ -54,6 +54,15 @@ module Guillotine
         end
       end
 
+      # Public: Removes the assigned short code for a URL.
+      #
+      # url - The String URL to remove.
+      #
+      # Returns nothing.
+      def clear(url)
+        Url.where(:url => url).delete
+      end
+
       def setup
         conn = Url.connection
         conn.create_table :urls do |t|

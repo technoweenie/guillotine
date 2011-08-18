@@ -45,6 +45,17 @@ module Guillotine
       def code_for(url)
         @urls[url]
       end
+
+      # Public: Removes the assigned short code for a URL.
+      #
+      # url - The String URL to remove.
+      #
+      # Returns nothing.
+      def clear(url)
+        if code = @urls.delete(url)
+          @hash.delete code
+        end
+      end
     end
   end
 end
