@@ -42,6 +42,17 @@ module Guillotine
         end
       end
 
+      # Public: Retrieves the code for a given URL.
+      #
+      # url - The String URL to lookup.
+      #
+      # Returns the String code, or nil if none is found.
+      def code_for(url)
+        if row = @table.select(:code).where(:url => url).first
+          row[:code]
+        end
+      end
+
       def setup
         @db.create_table :urls do
           string :url

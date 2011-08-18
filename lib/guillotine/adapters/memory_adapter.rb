@@ -32,9 +32,18 @@ module Guillotine
       #
       # code - The String code to lookup the URL.
       #
-      # Returns the String URL.
+      # Returns the String URL, or nil if none is found.
       def find(code)
         @hash[code]
+      end
+
+      # Public: Retrieves the code for a given URL.
+      #
+      # url - The String URL to lookup.
+      #
+      # Returns the String code, or nil if none is found.
+      def code_for(url)
+        @urls[url]
       end
     end
   end

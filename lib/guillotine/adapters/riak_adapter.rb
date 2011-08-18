@@ -53,6 +53,20 @@ module Guillotine
       rescue Riak::FailedRequest => err
         raise unless err.not_found?
       end
+
+      # Public: Retrieves the code for a given URL.
+      #
+      # url - The String URL to lookup.
+      #
+      # Returns the String code, or nil if none is found.
+      def code_for(url)
+        sha = Digest::SHA1.hexdigest url
+        if obj = @url_bucket.get(sha, :r => 1)
+          obj.data
+        end
+      rescue Riak::FailedRequest => err
+        raise unless err.not_found?
+      end
     end
   end
 end

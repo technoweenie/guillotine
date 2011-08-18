@@ -35,6 +35,11 @@ begin
     def test_missing_code
       assert_nil @db.find('missing')
     end
+
+    def test_gets_code_for_url
+      code = @db.add 'abc'
+      assert_equal code, @db.code_for('abc')
+    end
   end
 rescue LoadError
   puts "skipping ActiveRecord tests: #{$!}"
