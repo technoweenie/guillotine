@@ -65,6 +65,7 @@ module MyApp
     set :db => Guillotine::Adapters::RiakAdapter.new(bucket)
   end
 end
+```
 
 ## Domain Restriction
 
@@ -79,6 +80,8 @@ module MyApp
 
     # or, any *.github.com domain
     set :required_host, /(^|\.)github\.com$/
+  end
+end
 ```
 
 ## Not TODO
