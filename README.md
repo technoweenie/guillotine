@@ -29,12 +29,14 @@ run MyApp::App
 
 Once it's running, add URLs with a simple POST.
 
-    curl http://localhost:4567 -i -F "url=http://techno-weenie.net"
+    curl http://localhost:4567 -i \
+      -F "url=http://techno-weenie.net"
 
 You can specify your own code too:
 
-    curl http://localhost:4567 -i -F "url=http://techno-weenie.net" -F
-"code=abc"
+    curl http://localhost:4567 -i \
+      -F "url=http://techno-weenie.net" \
+      -F "code=abc"
 
 ## Sequel
 
