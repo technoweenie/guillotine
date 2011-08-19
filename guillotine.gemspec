@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'guillotine'
-  s.version           = '0.2.0'
-  s.date              = '2011-08-18'
+  s.version           = '1.0.0'
+  s.date              = '2011-08-19'
   s.rubyforge_project = 'guillotine'
 
   ## Make sure your summary is short. The description may be as long
@@ -49,6 +49,7 @@ Gem::Specification.new do |s|
   s.files = %w[
     Gemfile
     LICENSE
+    README.md
     Rakefile
     config/haproxy.riak.cfg
     guillotine.gemspec
