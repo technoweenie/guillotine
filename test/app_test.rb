@@ -9,6 +9,7 @@ class AppTest < Guillotine::TestCase
   def test_adding_a_link_returns_code
     url = 'http://github.com'
     post '/', :url => url
+    assert_equal 201, last_response.status
     assert code_url = last_response.headers['Location']
     code = code_url.gsub(/.*\//, '')
 
@@ -65,7 +66,7 @@ class AppTest < Guillotine::TestCase
     assert_match /must be from abc\.com/, last_response.body
 
     post '/', :url => 'http://abc.com/def'
-    assert_equal 302, last_response.status
+    assert_equal 201, last_response.status
   ensure
     Guillotine::App.set :required_host, nil
   end
@@ -77,10 +78,10 @@ class AppTest < Guillotine::TestCase
     assert_match /must match \/abc\\.com/, last_response.body
 
     post '/', :url => 'http://abc.com/def'
-    assert_equal 302, last_response.status
+    assert_equal 201, last_response.status
 
     post '/', :url => 'http://www.abc.com/def'
-    assert_equal 302, last_response.status
+    assert_equal 201, last_response.status
   ensure
     Guillotine::App.set :required_host, nil
   end

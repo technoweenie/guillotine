@@ -35,7 +35,7 @@ module Guillotine
 
       begin
         if code = settings.db.add(url.to_s.strip, code)
-          redirect code
+          redirect code, 201
         else
           halt 422, "Unable to shorten #{url}"
         end
