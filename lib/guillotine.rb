@@ -2,7 +2,7 @@ require 'base64'
 require 'digest/md5'
 
 module Guillotine
-  VERSION = "1.0.0"
+  VERSION = "1.0.1"
 
   dir = File.expand_path '../guillotine', __FILE__
   autoload :App, "#{dir}/app"
