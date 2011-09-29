@@ -26,19 +26,26 @@ module Guillotine
       def add(url, code = nil)
         sha      = url_key url
         url_obj  = @url_bucket.get_or_new sha, :r => 1
-        url_obj.data || begin
-          code        ||= shorten url
-          code_obj      = @code_bucket.get_or_new code
-          if existing_url = code_obj.data # key exists
-            raise DuplicateCodeError.new(existing_url, url, code) if existing_url != url
-          end
-          code_obj.content_type = url_obj.content_type = 'text/plain'
-          code_obj.data = url
-          url_obj.data  = code
-          code_obj.store
-          url_obj.store
-          code
+        if url_obj.data
+          code = url_obj.data
         end
+
+        code        ||= shorten url
+        code_obj      = @code_bucket.get_or_new code
+
+        if existing_url = code_obj.data # key exists
+          raise DuplicateCodeError.new(existing_url, url, code) if existing_url != url
+        end
+
+        if !url_obj.data # unsaved
+          url_obj.data = code
+          url_obj.store
+        end
+
+        code_obj.content_type = url_obj.content_type = 'text/plain'
+        code_obj.data = url
+        code_obj.store
+        code
       end
 
       # Public: Retrieves a URL from the code.

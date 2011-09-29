@@ -12,8 +12,8 @@ begin
   #   http://localhost:8091/riak/guillotine-test
   class RiakAdapterTest < Guillotine::TestCase
     client      = Riak::Client.new(:http_port => 8091)
-    CODE_BUCKET = client['guillotine-code-test']
-    URL_BUCKET  = client['guillotine-url-test']
+    CODE_BUCKET = client["guillotine-code-test-#{Process.pid}"]
+    URL_BUCKET  = client["guillotine-url-test-#{Process.pid}"]
     ADAPTER = Guillotine::Adapters::RiakAdapter.new CODE_BUCKET, URL_BUCKET
 
     def setup
@@ -42,6 +42,22 @@ begin
 
       URL_BUCKET.delete Digest::SHA1.hexdigest('def')
       CODE_BUCKET.delete 'code'
+    end
+
+    def test_adds_url_with_missing_url_key
+      url  = 'inconsistent'
+      code = "#{url}_code"
+      sha  = @db.url_key url
+      url_obj = URL_BUCKET.new sha
+      url_obj.data = code
+      url_obj.store
+
+      assert_nil @db.find(code)
+
+      added_code = @db.add url
+
+      assert_equal code, added_code
+      assert_equal url, @db.find(code)
     end
 
     def test_clashing_urls_raises_error
