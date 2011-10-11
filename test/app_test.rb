@@ -22,7 +22,7 @@ class AppTest < Guillotine::TestCase
     url  = 'http://github.com'
     code = ADAPTER.add url
 
-    post '/', :url => url
+    post '/', :url => url.upcase
     assert code_url = last_response.headers['Location']
     assert_equal code, code_url.gsub(/.*\//, '')
   end
@@ -36,6 +36,15 @@ class AppTest < Guillotine::TestCase
     get "/code"
     assert_equal 302, last_response.status
     assert_equal url, last_response.headers['Location']
+  end
+
+  def test_redirects_to_split_url
+    url = "http://abc.com\nhttp//def.com"
+    ADAPTER.hash['split'] = url
+    ADAPTER.urls[url]     = 'split'
+
+    get '/split'
+    assert_equal "http://abc.comhttp//def.com", last_response.headers['location']
   end
 
   def test_clashing_urls_raises_error
@@ -52,6 +61,13 @@ class AppTest < Guillotine::TestCase
   def test_add_url_with_linebreak
     post '/', :url => "https://abc.com\n"
     assert_equal 'http://example.org/SWtBvQ', last_response.headers['location']
+  end
+
+  def test_adds_split_url
+    post '/', :url => "https://abc.com\nhttp://abc.com"
+    assert_equal 'http://example.org/cb5CNA', last_response.headers['location']
+
+    assert_equal 'https://abc.comhttp//abc.com', ADAPTER.find('cb5CNA')
   end
 
   def test_rejects_non_http_urls

@@ -2,6 +2,7 @@ module Guillotine
   module Adapters
     # Stores shortened URLs in memory.  Totally scales.
     class MemoryAdapter < Adapter
+      attr_reader :hash, :urls
       def initialize
         @hash = {}
         @urls = {}

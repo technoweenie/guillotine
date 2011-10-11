@@ -7,7 +7,7 @@ module Guillotine
     get "/:code" do
       code = params[:code]
       if url = settings.db.find(code)
-        redirect url
+        redirect settings.db.parse_url(url).to_s
       else
         halt 404, "No url found for #{code}"
       end
