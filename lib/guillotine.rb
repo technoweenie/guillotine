@@ -3,7 +3,7 @@ require 'digest/md5'
 require 'addressable/uri'
 
 module Guillotine
-  VERSION = "1.0.1"
+  VERSION = "1.0.2"
 
   dir = File.expand_path '../guillotine', __FILE__
   autoload :App, "#{dir}/app"
