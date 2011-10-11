@@ -1,5 +1,4 @@
 require 'sinatra/base'
-require 'addressable/uri'
 
 module Guillotine
   class App < Sinatra::Base
@@ -15,8 +14,7 @@ module Guillotine
     end
 
     post "/" do
-      url  = Addressable::URI.parse params[:url]
-      code = params[:code]
+      url  = settings.db.parse_url params[:url].to_s
 
       if !(url && url.scheme =~ /^https?$/)
         halt 422, "Invalid url: #{url}"
@@ -34,7 +32,7 @@ module Guillotine
       end
 
       begin
-        if code = settings.db.add(url.to_s.strip, code)
+        if code = settings.db.add(url.to_s, params[:code])
           redirect code, 201
         else
           halt 422, "Unable to shorten #{url}"

@@ -1,5 +1,6 @@
 require 'base64'
 require 'digest/md5'
+require 'addressable/uri'
 
 module Guillotine
   VERSION = "1.0.1"
@@ -41,6 +42,17 @@ module Guillotine
       # Returns a unique String code for the URL.
       def shorten(url)
         Base64.urlsafe_encode64([Digest::MD5.hexdigest(url).to_i(16)].pack("N")).sub(/==\n?$/, '')
+      end
+
+      # Parses and sanitizes a URL.
+      #
+      # url - A String URL.
+      #
+      # Returns an Addressable::URI.
+      def parse_url(url)
+        url.gsub! /\s/, ''
+        url.downcase!
+        Addressable::URI.parse url
       end
     end
   end
