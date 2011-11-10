@@ -27,7 +27,7 @@ module Guillotine
       def add(url, code = nil)
         sha      = url_key url
         url_obj  = @url_bucket.get_or_new sha, :r => 1
-        if url_obj.data
+        if url_obj.raw_data
           fix_url_object(url_obj)
           code = url_obj.data
         end
