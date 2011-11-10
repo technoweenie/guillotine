@@ -4,6 +4,7 @@ module Guillotine
   module Adapters
     # Stores shortened URLs in Riak.  Totally scales.
     class RiakAdapter < Adapter
+      PLAIN = 'text/plain'.freeze
       attr_reader :code_bucket, :url_bucket
 
       # Initializes the adapter.
@@ -27,12 +28,13 @@ module Guillotine
         sha      = url_key url
         url_obj  = @url_bucket.get_or_new sha, :r => 1
         if url_obj.data
+          fix_url_object(url_obj)
           code = url_obj.data
         end
 
         code   ||= shorten url
         code_obj = @code_bucket.get_or_new code
-        code_obj.content_type = url_obj.content_type = 'text/plain'
+        code_obj.content_type = url_obj.content_type = PLAIN
 
         if existing_url = code_obj.data # key exists
           raise DuplicateCodeError.new(existing_url, url, code) if existing_url != url
@@ -100,9 +102,23 @@ module Guillotine
       # Returns a Riak::RObject, or nil if none is found.
       def code_object(url)
         sha = url_key url
-        @url_bucket.get(sha, :r => 1)
+        if o = @url_bucket.get(sha, :r => 1)
+          fix_url_object(o)
+        end
       rescue Riak::FailedRequest => err
         raise unless err.not_found?
+      end
+
+      # Fixes a bug in Guillotine 1.0.2 where the content type on url objects
+      # were not being set.  The ruby Riak::Client defaults to JSON, so
+      # strings were being saved as "somecode", which is unparseable by JSON.
+      def fix_url_object(obj)
+        if obj.content_type != PLAIN
+          obj.content_type = PLAIN
+          obj.data = JSON.parse(%({"data":#{obj.raw_data}}))['data']
+          obj.store
+        end
+        obj
       end
 
       def url_key(url)

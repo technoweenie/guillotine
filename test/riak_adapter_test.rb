@@ -49,6 +49,7 @@ begin
       code = "#{url}_code"
       sha  = @db.url_key url
       url_obj = URL_BUCKET.new sha
+      url_obj.content_type = Guillotine::Adapters::RiakAdapter::PLAIN
       url_obj.data = code
       url_obj.store
 
