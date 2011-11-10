@@ -30,8 +30,9 @@ module Guillotine
           code = url_obj.data
         end
 
-        code        ||= shorten url
-        code_obj      = @code_bucket.get_or_new code
+        code   ||= shorten url
+        code_obj = @code_bucket.get_or_new code
+        code_obj.content_type = url_obj.content_type = 'text/plain'
 
         if existing_url = code_obj.data # key exists
           raise DuplicateCodeError.new(existing_url, url, code) if existing_url != url
@@ -42,7 +43,6 @@ module Guillotine
           url_obj.store
         end
 
-        code_obj.content_type = url_obj.content_type = 'text/plain'
         code_obj.data = url
         code_obj.store
         code
