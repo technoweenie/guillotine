@@ -1,50 +1,38 @@
-require "json"
-
 module Guillotine
   module Adapters
-    # Stores shorterned URL in memory^H^H^H^H Redis. Fully web scale.
-    class RedisAdapter < MemoryAdapter
+    class RedisAdapter < Adapter
 
-      # Public: Set the Redis instance so we can persist urls and hashes into
-      # Redis.
-      #
-      # redis - The Redis instance to persist to.
       def initialize(redis)
         @redis = redis
-        @urls = JSON.parse(@redis.get("guillotine:urls") || "{}")
-        @hash = JSON.parse(@redis.get("guillotine:hash") || "{}")
       end
 
-      # Public: Stores the shortened version of a URL and persists to Redis.
-      # 
-      # url  - The String URL to shorten and store.
-      # code - Optional String code for the URL.
-      #
-      # Returns the unique String code for the URL.  If the URL is added
-      # multiple times, this should return the same code.
       def add(url, code = nil)
-        code = super(url, code)
-        persist_to_redis
-        code
+        if existing_code = @redis.get("guillotine:urls:#{url}")
+          existing_code
+        else
+          code ||= shorten(url)
+          if existing_url = @redis.get("guillotine:hash:#{code}")
+              raise DuplicateCodeError.new(existing_url, url, code) if url != existing_url
+          end
+          @redis.set "guillotine:hash:#{code}", url
+          @redis.set "guillotine:urls:#{url}", code
+          code
+        end
       end
 
-      # Public: Removes the assigned short code for a URL and persists to
-      # Redis.
-      #
-      # url - The String URL to remove.
-      #
-      # Returns nothing.
+      def find(code)
+        @redis.get "guillotine:hash:#{code}"
+      end
+
+      def code_for(url)
+        @redis.get "guillotine:urls:#{url}"
+      end
+
       def clear(url)
-        super(url)
-        persist_to_redis
-      end
-
-      # Persist the URLs and Hashes to Redis.
-      #
-      # Returns nothing.
-      def persist_to_redis
-        @redis.set "guillotine:urls", @urls.to_json
-        @redis.set "guillotine:hash", @hash.to_json
+        if code = @redis.get("guillotine:urls:#{url}")
+          @redis.del "guillotine:urls:#{url}"
+          @redis.del "guillotine:hash:#{code}"
+        end
       end
     end
   end
