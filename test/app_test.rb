@@ -38,6 +38,17 @@ class AppTest < Guillotine::TestCase
     assert_equal url, last_response.headers['Location']
   end
 
+  def test_adds_url_with_custom_code
+    url = 'http://github.com/abc'
+    post '/', :url => url, :code => '%E2%9C%88'
+    assert code_url = last_response.headers['Location']
+    assert_match /\/%E2%9C%88$/, code_url
+
+    get "/%E2%9C%88"
+    assert_equal 302, last_response.status
+    assert_equal url, last_response.headers['Location']
+  end
+
   def test_redirects_to_split_url
     url = "http://abc.com\nhttp//def.com"
     ADAPTER.hash['split'] = url

@@ -37,11 +37,12 @@ begin
     end
 
     def test_adds_url_with_custom_code
-      assert_equal 'code', @db.add('def', 'code')
-      assert_equal 'def', @db.find('code')
+      code = '%E2%9C%88'
+      assert_equal code, @db.add('def', code)
+      assert_equal 'def', @db.find(code)
 
       URL_BUCKET.delete Digest::SHA1.hexdigest('def')
-      CODE_BUCKET.delete 'code'
+      CODE_BUCKET.delete code
     end
 
     def test_adds_url_with_missing_url_key

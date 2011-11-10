@@ -21,8 +21,9 @@ begin
     end
 
     def test_adds_url_with_custom_code
-      assert_equal 'code', @db.add('def', 'code')
-      assert_equal 'def', @db.find('code')
+      code = '%E2%9C%88'
+      assert_equal code, @db.add('def', code)
+      assert_equal 'def', @db.find(code)
     end
 
     def test_clashing_urls_raises_error
