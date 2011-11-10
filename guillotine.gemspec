@@ -58,6 +58,7 @@ Gem::Specification.new do |s|
     lib/guillotine/adapters/memory_adapter.rb
     lib/guillotine/adapters/riak_adapter.rb
     lib/guillotine/adapters/sequel_adapter.rb
+    lib/guillotine/adapters/mongo_adapter.rb
     lib/guillotine/app.rb
     test/active_record_adapter_test.rb
     test/app_test.rb
@@ -65,6 +66,7 @@ Gem::Specification.new do |s|
     test/memory_adapter_test.rb
     test/riak_adapter_test.rb
     test/sequel_adapter_test.rb
+    test/mongo_adapter_test.rb
   ]
   # = MANIFEST =
 
