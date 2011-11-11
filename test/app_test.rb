@@ -8,7 +8,7 @@ class AppTest < Guillotine::TestCase
 
   def test_adding_a_link_returns_code
     url = 'http://github.com'
-    post '/', :url => url
+    post '/', :url => url + '?a=1'
     assert_equal 201, last_response.status
     assert code_url = last_response.headers['Location']
     code = code_url.gsub(/.*\//, '')
@@ -22,7 +22,7 @@ class AppTest < Guillotine::TestCase
     url  = 'http://github.com'
     code = ADAPTER.add url
 
-    post '/', :url => url
+    post '/', :url => url + '#a=1'
     assert code_url = last_response.headers['Location']
     assert_equal code, code_url.gsub(/.*\//, '')
   end
