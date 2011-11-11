@@ -21,7 +21,7 @@ module Guillotine
         else
           code ||= shorten(url)
           if existing_url = @redis.get("guillotine:hash:#{code}")
-              raise DuplicateCodeError.new(existing_url, url, code) if url != existing_url
+            raise DuplicateCodeError.new(existing_url, url, code) if url != existing_url
           end
           @redis.set "guillotine:hash:#{code}", url
           @redis.set "guillotine:urls:#{url}", code
