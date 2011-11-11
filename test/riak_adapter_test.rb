@@ -29,8 +29,8 @@ begin
     end
 
     def test_adding_duplicate_link_returns_same_code
-      code = @db.add 'abc'
-      assert_equal code, @db.add('abc')
+      code = @db.add 'Abc'
+      assert_equal code, @db.add('ABc')
 
       URL_BUCKET.delete Digest::SHA1.hexdigest('abc')
       CODE_BUCKET.delete code

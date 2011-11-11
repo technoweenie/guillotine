@@ -25,8 +25,8 @@ module Guillotine
       # Returns the unique String code for the URL.  If the URL is added
       # multiple times, this should return the same code.
       def add(url, code = nil)
-        sha      = url_key url
-        url_obj  = @url_bucket.get_or_new sha, :r => 1
+        sha     = url_key url
+        url_obj = @url_bucket.get_or_new sha, :r => 1
         if url_obj.raw_data
           fix_url_object(url_obj)
           code = url_obj.data
@@ -37,7 +37,7 @@ module Guillotine
         code_obj.content_type = url_obj.content_type = PLAIN
 
         if existing_url = code_obj.data # key exists
-          raise DuplicateCodeError.new(existing_url, url, code) if existing_url != url
+          raise DuplicateCodeError.new(existing_url, url, code) if url_key(existing_url) != sha
         end
 
         if !url_obj.data # unsaved
@@ -122,7 +122,7 @@ module Guillotine
       end
 
       def url_key(url)
-        Digest::SHA1.hexdigest url
+        Digest::SHA1.hexdigest url.downcase
       end
     end
   end
