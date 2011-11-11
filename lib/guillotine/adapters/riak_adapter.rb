@@ -25,8 +25,8 @@ module Guillotine
       # Returns the unique String code for the URL.  If the URL is added
       # multiple times, this should return the same code.
       def add(url, code = nil)
-        sha      = url_key url
-        url_obj  = @url_bucket.get_or_new sha, :r => 1
+        sha     = url_key url
+        url_obj = @url_bucket.get_or_new sha, :r => 1
         if url_obj.raw_data
           fix_url_object(url_obj)
           code = url_obj.data
@@ -37,7 +37,7 @@ module Guillotine
         code_obj.content_type = url_obj.content_type = PLAIN
 
         if existing_url = code_obj.data # key exists
-          raise DuplicateCodeError.new(existing_url, url, code) if existing_url != url
+          raise DuplicateCodeError.new(existing_url, url, code) if url_key(existing_url) != sha
         end
 
         if !url_obj.data # unsaved
@@ -110,19 +110,24 @@ module Guillotine
       end
 
       # Fixes a bug in Guillotine 1.0.2 where the content type on url objects
-      # were not being set.  The ruby Riak::Client defaults to JSON, so
+      # was not being set.  The ruby Riak::Client defaults to JSON, so
       # strings were being saved as "somecode", which is unparseable by JSON.
-      def fix_url_object(obj)
-        if obj.content_type != PLAIN
+      def fix_url_object(obj, data = nil)
+        if data
           obj.content_type = PLAIN
-          obj.data = JSON.parse(%({"data":#{obj.raw_data}}))['data']
+          obj.data = data
           obj.store
+          return obj
         end
-        obj
+        case obj.content_type
+          when /json/ then fix_url_object(obj, JSON.parse(%({"data":#{obj.raw_data}}))['data'])
+          when PLAIN  then obj
+          else fix_url_object(obj, obj.data) # old values had the right data but the content type was application/x-www-form-urlencoded
+        end
       end
 
       def url_key(url)
-        Digest::SHA1.hexdigest url
+        Digest::SHA1.hexdigest url.downcase
       end
     end
   end

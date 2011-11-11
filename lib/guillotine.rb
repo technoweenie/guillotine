@@ -3,7 +3,7 @@ require 'digest/md5'
 require 'addressable/uri'
 
 module Guillotine
-  VERSION = "1.0.4"
+  VERSION = "1.0.8"
 
   dir = File.expand_path '../guillotine', __FILE__
   autoload :App, "#{dir}/app"
@@ -52,7 +52,7 @@ module Guillotine
       # Returns an Addressable::URI.
       def parse_url(url)
         url.gsub! /\s/, ''
-        url.downcase!
+        url.gsub! /(\#|\?).*/, ''
         Addressable::URI.parse url
       end
     end
