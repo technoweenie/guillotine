@@ -112,13 +112,18 @@ module Guillotine
       # Fixes a bug in Guillotine 1.0.2 where the content type on url objects
       # was not being set.  The ruby Riak::Client defaults to JSON, so
       # strings were being saved as "somecode", which is unparseable by JSON.
-      def fix_url_object(obj)
-        if obj.content_type != PLAIN
+      def fix_url_object(obj, data = nil)
+        if data
           obj.content_type = PLAIN
-          obj.data = JSON.parse(%({"data":#{obj.raw_data}}))['data']
+          obj.data = data
           obj.store
+          return obj
         end
-        obj
+        case obj.content_type
+          when /json/ then fix_url_object(obj, JSON.parse(%({"data":#{obj.raw_data}}))['data'])
+          when PLAIN  then obj
+          else fix_url_object(obj, obj.data) # old values had the right data but the content type was application/x-www-form-urlencoded
+        end
       end
 
       def url_key(url)
