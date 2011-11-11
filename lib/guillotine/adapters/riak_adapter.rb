@@ -110,7 +110,7 @@ module Guillotine
       end
 
       # Fixes a bug in Guillotine 1.0.2 where the content type on url objects
-      # were not being set.  The ruby Riak::Client defaults to JSON, so
+      # was not being set.  The ruby Riak::Client defaults to JSON, so
       # strings were being saved as "somecode", which is unparseable by JSON.
       def fix_url_object(obj)
         if obj.content_type != PLAIN
