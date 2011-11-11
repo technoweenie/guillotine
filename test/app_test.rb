@@ -22,7 +22,7 @@ class AppTest < Guillotine::TestCase
     url  = 'http://github.com'
     code = ADAPTER.add url
 
-    post '/', :url => url.upcase
+    post '/', :url => url
     assert code_url = last_response.headers['Location']
     assert_equal code, code_url.gsub(/.*\//, '')
   end

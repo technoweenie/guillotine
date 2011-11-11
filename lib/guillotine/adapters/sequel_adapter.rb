@@ -14,8 +14,8 @@ module Guillotine
       # Returns the unique String code for the URL.  If the URL is added
       # multiple times, this should return the same code.
       def add(url, code = nil)
-        if row = @table.select(:code).where(:url => url).first
-          row[:code]
+        if existing = code_for(url)
+          existing
         else
           code ||= shorten url
           begin
