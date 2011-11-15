@@ -25,6 +25,7 @@ module Guillotine
     autoload :SequelAdapter,       "#{dir}/sequel_adapter"
     autoload :RiakAdapter,         "#{dir}/riak_adapter"
     autoload :ActiveRecordAdapter, "#{dir}/active_record_adapter"
+    autoload :RedisAdapter,        "#{dir}/redis_adapter"
 
     # Adapters handle the storage and retrieval of URLs in the system.  You can
     # use whatever you want, as long as it implements the #add and #find
