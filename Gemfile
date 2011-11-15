@@ -13,6 +13,7 @@ if ENV['TRAVIS']
   gem 'sqlite3'
   gem 'redis'
   gem 'mongo'
+  gem 'bson_ext'
 end
 
 # Bundler isn't designed to provide optional functionality like this.  You're
