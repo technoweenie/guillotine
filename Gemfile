@@ -1,7 +1,8 @@
 source 'http://rubygems.org'
 
-gem 'sinatra'
-gem 'addressable'
+gemspec
+
+gem 'rake'
 
 group :test do
   gem 'rack-test'
