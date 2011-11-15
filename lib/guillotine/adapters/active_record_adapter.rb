@@ -23,7 +23,7 @@ module Guillotine
           code ||= shorten url
           begin
             Url.create :url => url, :code => code
-          rescue ActiveRecord::RecordNotUnique
+          rescue ActiveRecord::RecordNotUnique, ActiveRecord::StatementInvalid
             row = Url.select(:url).where(:code => code).first
             existing_url = row && row[:url]
             raise DuplicateCodeError.new(existing_url, url, code)
