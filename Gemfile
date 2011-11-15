@@ -11,6 +11,7 @@ end
 if ENV['TRAVIS']
   gem 'sequel'
   gem 'sqlite3'
+  gem 'redis'
 end
 
 # Bundler isn't designed to provide optional functionality like this.  You're
