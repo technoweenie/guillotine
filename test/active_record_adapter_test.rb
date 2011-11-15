@@ -11,24 +11,24 @@ begin
     end
 
     def test_adding_a_link_returns_code
-      code = @db.add 'abc'
-      assert_equal 'abc', @db.find(code)
+      code = @db.add 'aaa'
+      assert_equal 'aaa', @db.find(code)
     end
 
     def test_adding_duplicate_link_returns_same_code
-      code = @db.add 'abc'
-      assert_equal code, @db.add('abc')
+      code = @db.add 'bbb'
+      assert_equal code, @db.add('bbb')
     end
 
     def test_adds_url_with_custom_code
-      assert_equal 'code', @db.add('def', 'code')
-      assert_equal 'def', @db.find('code')
+      assert_equal 'code', @db.add('ccc', 'code')
+      assert_equal 'ccc', @db.find('code')
     end
 
     def test_clashing_urls_raises_error
-      code = @db.add '123'
+      code = @db.add 'ddd'
       assert_raises Guillotine::DuplicateCodeError do
-        code = @db.add '456', code
+        code = @db.add 'eee', code
       end
     end
 
@@ -37,15 +37,15 @@ begin
     end
 
     def test_gets_code_for_url
-      code = @db.add 'abc'
-      assert_equal code, @db.code_for('abc')
+      code = @db.add 'fff'
+      assert_equal code, @db.code_for('fff')
     end
 
     def test_clears_code_for_url
-      code = @db.add 'abc'
-      assert_equal 'abc', @db.find(code)
+      code = @db.add 'ggg'
+      assert_equal 'ggg', @db.find(code)
 
-      @db.clear 'abc'
+      @db.clear 'ggg'
 
       assert_nil @db.find(code)
     end
