@@ -26,7 +26,7 @@ module Guillotine
       #
       # Returns the String URL, or nil if none is found.
       def find(code)
-        @collection.find_one({_id: code}, {transformer: lambda {|doc| doc['url'] }})
+        @collection.find_one({:_id => code}, {:transformer => lambda {|doc| doc['url'] }})
       end
 
       # Public: Retrieves the code for a given URL.
@@ -35,7 +35,7 @@ module Guillotine
       #
       # Returns the String code, or nil if none is found.
       def code_for(url)
-        @collection.find_one({url: url}, {transformer: lambda {|doc| doc['_id'] }})
+        @collection.find_one({:url => url}, {:transformer => lambda {|doc| doc['_id'] }})
       end
 
       # Public: Removes the assigned short code for a URL.
@@ -44,18 +44,17 @@ module Guillotine
       #
       # Returns nothing.
       def clear(url)
-        @collection.remove(url: url)
+        @collection.remove(:url => url)
       end
       
-      private
+    private
       def insert(url, code)
         if existing_url = find(code)
           raise DuplicateCodeError.new(existing_url, url, code) if url != existing_url
         end
-        @collection.insert({_id: code, url: url})
+        @collection.insert(:_id => code, :url => url)
         code
       end
-
     end
   end
 end
