@@ -60,7 +60,7 @@ module Guillotine
       #
       # Returns nothing.
       def clear(url)
-        Url.where(:url => url).delete
+        Url.where(:url => url).delete_all
       end
 
       def setup
