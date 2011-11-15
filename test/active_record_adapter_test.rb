@@ -8,7 +8,6 @@ begin
 
     def setup
       @db = ADAPTER
-      Guillotine::Adapters::ActiveRecordAdapter::Url.delete_all
     end
 
     def test_adding_a_link_returns_code
