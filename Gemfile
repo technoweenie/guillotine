@@ -8,6 +8,12 @@ group :test do
   gem 'rack-test'
 end
 
+if ENV['TRAVIS']
+  gem 'sequel'
+  gem 'sqlite3'
+  gem 'activerecord'
+end
+
 # Bundler isn't designed to provide optional functionality like this.  You're
 # on your own
 #
