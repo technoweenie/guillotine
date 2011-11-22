@@ -64,8 +64,8 @@ module Guillotine
 
       def setup
         @db.create_table :urls do
-          string :url
-          string :code
+          String :url
+          String :code
 
           unique :url
           unique :code
