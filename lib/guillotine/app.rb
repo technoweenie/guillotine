@@ -15,7 +15,7 @@ module Guillotine
     post "/" do
       status, head, body = settings.service.create(params[:url], params[:code])
 
-      if loc = head && head['Location']
+      if loc = head['Location']
         head['Location'] = File.join(request.url, loc)
       end
 

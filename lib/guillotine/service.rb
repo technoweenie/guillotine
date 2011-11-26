@@ -28,7 +28,7 @@ module Guillotine
       if url = @db.find(code)
         [302, {"Location" => @db.parse_url(url).to_s}]
       else
-        [404, nil, "No url found for #{code}"]
+        [404, {}, "No url found for #{code}"]
       end
     end
 
@@ -40,9 +40,6 @@ module Guillotine
     # Returns 201 with the Location pointing to the code, or 422.
     def create(url, code = nil)
       url = ensure_url(url)
-      if !(url && url.scheme.to_s =~ /^https?$/)
-        return [422, nil, "Invalid url: #{url}"]
-      end
 
       if resp = check_host(url)
         return resp
@@ -52,10 +49,10 @@ module Guillotine
         if code = @db.add(url.to_s, code)
           [201, {"Location" => code}]
         else
-          [422, nil, "Unable to shorten #{url}"]
+          [422, {}, "Unable to shorten #{url}"]
         end
       rescue DuplicateCodeError => err
-        [422, nil, err.to_s]
+        [422, {}, err.to_s]
       end
     end
 
@@ -66,7 +63,11 @@ module Guillotine
     #
     # Returns a 422 Rack::Response if the host is invalid, or nil.
     def check_host(url)
-      @host_check.call url
+      if url.scheme !~ /^https?$/
+        [422, {}, "Invalid url: #{url}"]
+      else
+        @host_check.call url
+      end
     end
 
     # Converts the `required_host` argument to a lambda for #check_host.
@@ -94,7 +95,7 @@ module Guillotine
     def build_host_regex_check(regex)
       @host_check = lambda do |url|
         if url.host.to_s !~ regex
-          [422, nil, "URL must match #{regex.inspect}"]
+          [422, {}, "URL must match #{regex.inspect}"]
         end
       end
     end
@@ -107,7 +108,7 @@ module Guillotine
     def build_host_string_check(hostname)
       @host_check = lambda do |url|
         if url.host != hostname
-          [422, nil, "URL must be from #{hostname}"]
+          [422, {}, "URL must be from #{hostname}"]
         end
       end
     end
