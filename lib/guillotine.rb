@@ -3,7 +3,7 @@ require 'digest/md5'
 require 'addressable/uri'
 
 module Guillotine
-  VERSION = "1.0.8"
+  VERSION = "1.1.0"
 
   dir = File.expand_path '../guillotine', __FILE__
   require "#{dir}/service"
