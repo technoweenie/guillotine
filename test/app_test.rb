@@ -3,9 +3,11 @@ require File.expand_path('../helper', __FILE__)
 module Guillotine
   class AppTest < TestCase
     ADAPTER = Adapters::MemoryAdapter.new
-    App.set :db, ADAPTER
+    SERVICE = Service.new(ADAPTER)
+    App.set :service, SERVICE
 
     include Rack::Test::Methods
+
     def test_adding_a_link_returns_code
       url = 'http://github.com'
       post '/', :url => url + '?a=1'
@@ -87,7 +89,7 @@ module Guillotine
     end
 
     def test_reject_shortened_url_from_other_domain
-      Guillotine::App.set :required_host, 'abc.com'
+      App.set :service, Service.new(ADAPTER, 'abc.com')
       post '/', :url => 'http://github.com'
       assert_equal 422, last_response.status
       assert_match /must be from abc\.com/, last_response.body
@@ -99,7 +101,7 @@ module Guillotine
     end
 
     def test_reject_shortened_url_from_other_domain_by_regex
-      Guillotine::App.set :required_host, /abc\.com$/
+      App.set :service, Service.new(ADAPTER, /abc\.com$/)
       post '/', :url => 'http://github.com'
       assert_equal 422, last_response.status
       assert_match /must match \/abc\\.com/, last_response.body
@@ -110,11 +112,11 @@ module Guillotine
       post '/', :url => 'http://www.abc.com/def'
       assert_equal 201, last_response.status
     ensure
-      Guillotine::App.set :required_host, nil
+      App.set :service, SERVICE
     end
 
     def app
-      Guillotine::App
+      App
     end
   end
 end

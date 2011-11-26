@@ -6,6 +6,7 @@ module Guillotine
   VERSION = "1.0.8"
 
   dir = File.expand_path '../guillotine', __FILE__
+  require "#{dir}/service"
   autoload :App, "#{dir}/app"
 
   class DuplicateCodeError < StandardError
