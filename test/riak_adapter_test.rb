@@ -2,6 +2,12 @@ require File.expand_path('../helper', __FILE__)
 
 begin
   require 'riak/client'
+  # try Riak::Client with the default Riak port
+  RIAK_TEST_CLIENT = Riak::Client.new
+  # now try it with the default Riak dev port
+  RIAK_TEST_CLIENT.http_port = 8091 unless RIAK_TEST_CLIENT.ping
+
+  raise LoadError, "Could not ping" unless RIAK_TEST_CLIENT.ping
 
   # Assumes a local dev install of riak is setup
   #
@@ -11,9 +17,8 @@ begin
   #
   #   http://localhost:8091/riak/guillotine-test
   class RiakAdapterTest < Guillotine::TestCase
-    client      = Riak::Client.new(:http_port => 8091)
-    CODE_BUCKET = client["guillotine-code-test-#{Process.pid}"]
-    URL_BUCKET  = client["guillotine-url-test-#{Process.pid}"]
+    CODE_BUCKET = RIAK_TEST_CLIENT["guillotine-code-test-#{Process.pid}"]
+    URL_BUCKET  = RIAK_TEST_CLIENT["guillotine-url-test-#{Process.pid}"]
     ADAPTER = Guillotine::Adapters::RiakAdapter.new CODE_BUCKET, URL_BUCKET
 
     def setup
