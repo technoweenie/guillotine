@@ -7,7 +7,7 @@ begin
   # now try it with the default Riak dev port
   RIAK_TEST_CLIENT.http_port = 8091 unless RIAK_TEST_CLIENT.ping
 
-  raise LoadError, "Could not ping" unless RIAK_TEST_CLIENT.ping
+  raise LoadError, "Could not ping (#{RIAK_TEST_CLIENT.inspect})" unless RIAK_TEST_CLIENT.ping
 
   # Assumes a local dev install of riak is setup
   #
