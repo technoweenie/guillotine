@@ -1,119 +1,121 @@
 require File.expand_path('../helper', __FILE__)
 
-class AppTest < Guillotine::TestCase
-  ADAPTER = Guillotine::Adapters::MemoryAdapter.new
-  Guillotine::App.set :db, ADAPTER
+module Guillotine
+  class AppTest < TestCase
+    ADAPTER = Adapters::MemoryAdapter.new
+    App.set :db, ADAPTER
 
-  include Rack::Test::Methods
+    include Rack::Test::Methods
+    def test_adding_a_link_returns_code
+      url = 'http://github.com'
+      post '/', :url => url + '?a=1'
+      assert_equal 201, last_response.status
+      assert code_url = last_response.headers['Location']
+      code = code_url.gsub(/.*\//, '')
 
-  def test_adding_a_link_returns_code
-    url = 'http://github.com'
-    post '/', :url => url + '?a=1'
-    assert_equal 201, last_response.status
-    assert code_url = last_response.headers['Location']
-    code = code_url.gsub(/.*\//, '')
+      get "/#{code}"
+      assert_equal 302, last_response.status
+      assert_equal url, last_response.headers['Location']
+    end
 
-    get "/#{code}"
-    assert_equal 302, last_response.status
-    assert_equal url, last_response.headers['Location']
-  end
+    def test_adding_duplicate_link_returns_same_code
+      url  = 'http://github.com'
+      code = ADAPTER.add url
 
-  def test_adding_duplicate_link_returns_same_code
-    url  = 'http://github.com'
-    code = ADAPTER.add url
+      post '/', :url => url + '#a=1'
+      assert code_url = last_response.headers['Location']
+      assert_equal code, code_url.gsub(/.*\//, '')
+    end
 
-    post '/', :url => url + '#a=1'
-    assert code_url = last_response.headers['Location']
-    assert_equal code, code_url.gsub(/.*\//, '')
-  end
+    def test_adds_url_with_custom_code
+      url = 'http://github.com/abc'
+      post '/', :url => url, :code => 'code'
+      assert code_url = last_response.headers['Location']
+      assert_match /\/code$/, code_url
 
-  def test_adds_url_with_custom_code
-    url = 'http://github.com/abc'
-    post '/', :url => url, :code => 'code'
-    assert code_url = last_response.headers['Location']
-    assert_match /\/code$/, code_url
+      get "/code"
+      assert_equal 302, last_response.status
+      assert_equal url, last_response.headers['Location']
+    end
 
-    get "/code"
-    assert_equal 302, last_response.status
-    assert_equal url, last_response.headers['Location']
-  end
+    def test_adds_url_with_custom_code
+      url = 'http://github.com/abc'
+      post '/', :url => url, :code => '%E2%9C%88'
+      assert code_url = last_response.headers['Location']
+      assert_match /\/%E2%9C%88$/, code_url
 
-  def test_adds_url_with_custom_code
-    url = 'http://github.com/abc'
-    post '/', :url => url, :code => '%E2%9C%88'
-    assert code_url = last_response.headers['Location']
-    assert_match /\/%E2%9C%88$/, code_url
+      get "/%E2%9C%88"
+      assert_equal 302, last_response.status
+      assert_equal url, last_response.headers['Location']
+    end
 
-    get "/%E2%9C%88"
-    assert_equal 302, last_response.status
-    assert_equal url, last_response.headers['Location']
-  end
+    def test_redirects_to_split_url
+      url = "http://abc.com\nhttp//def.com"
+      ADAPTER.hash['split'] = url
+      ADAPTER.urls[url]     = 'split'
 
-  def test_redirects_to_split_url
-    url = "http://abc.com\nhttp//def.com"
-    ADAPTER.hash['split'] = url
-    ADAPTER.urls[url]     = 'split'
+      get '/split'
+      assert_equal "http://abc.comhttp//def.com", last_response.headers['location']
+    end
 
-    get '/split'
-    assert_equal "http://abc.comhttp//def.com", last_response.headers['location']
-  end
+    def test_clashing_urls_raises_error
+      code = ADAPTER.add 'http://github.com/123'
+      post '/', :url => 'http://github.com/456', :code => code
+      assert_equal 422, last_response.status
+    end
 
-  def test_clashing_urls_raises_error
-    code = ADAPTER.add 'http://github.com/123'
-    post '/', :url => 'http://github.com/456', :code => code
-    assert_equal 422, last_response.status
-  end
+    def test_add_without_url
+      post '/'
+      assert_equal 422, last_response.status
+    end
 
-  def test_add_without_url
-    post '/'
-    assert_equal 422, last_response.status
-  end
+    def test_add_url_with_linebreak
+      post '/', :url => "https://abc.com\n"
+      assert_equal 'http://example.org/SWtBvQ', last_response.headers['location']
+    end
 
-  def test_add_url_with_linebreak
-    post '/', :url => "https://abc.com\n"
-    assert_equal 'http://example.org/SWtBvQ', last_response.headers['location']
-  end
+    def test_adds_split_url
+      post '/', :url => "https://abc.com\nhttp://abc.com"
+      assert_equal 'http://example.org/cb5CNA', last_response.headers['location']
 
-  def test_adds_split_url
-    post '/', :url => "https://abc.com\nhttp://abc.com"
-    assert_equal 'http://example.org/cb5CNA', last_response.headers['location']
+      assert_equal 'https://abc.comhttp//abc.com', ADAPTER.find('cb5CNA')
+    end
 
-    assert_equal 'https://abc.comhttp//abc.com', ADAPTER.find('cb5CNA')
-  end
+    def test_rejects_non_http_urls
+      post '/', :url => 'ftp://abc.com'
+      assert_equal 422, last_response.status
+    end
 
-  def test_rejects_non_http_urls
-    post '/', :url => 'ftp://abc.com'
-    assert_equal 422, last_response.status
-  end
+    def test_reject_shortened_url_from_other_domain
+      Guillotine::App.set :required_host, 'abc.com'
+      post '/', :url => 'http://github.com'
+      assert_equal 422, last_response.status
+      assert_match /must be from abc\.com/, last_response.body
 
-  def test_reject_shortened_url_from_other_domain
-    Guillotine::App.set :required_host, 'abc.com'
-    post '/', :url => 'http://github.com'
-    assert_equal 422, last_response.status
-    assert_match /must be from abc\.com/, last_response.body
+      post '/', :url => 'http://abc.com/def'
+      assert_equal 201, last_response.status
+    ensure
+      Guillotine::App.set :required_host, nil
+    end
 
-    post '/', :url => 'http://abc.com/def'
-    assert_equal 201, last_response.status
-  ensure
-    Guillotine::App.set :required_host, nil
-  end
+    def test_reject_shortened_url_from_other_domain_by_regex
+      Guillotine::App.set :required_host, /abc\.com$/
+      post '/', :url => 'http://github.com'
+      assert_equal 422, last_response.status
+      assert_match /must match \/abc\\.com/, last_response.body
 
-  def test_reject_shortened_url_from_other_domain_by_regex
-    Guillotine::App.set :required_host, /abc\.com$/
-    post '/', :url => 'http://github.com'
-    assert_equal 422, last_response.status
-    assert_match /must match \/abc\\.com/, last_response.body
+      post '/', :url => 'http://abc.com/def'
+      assert_equal 201, last_response.status
 
-    post '/', :url => 'http://abc.com/def'
-    assert_equal 201, last_response.status
+      post '/', :url => 'http://www.abc.com/def'
+      assert_equal 201, last_response.status
+    ensure
+      Guillotine::App.set :required_host, nil
+    end
 
-    post '/', :url => 'http://www.abc.com/def'
-    assert_equal 201, last_response.status
-  ensure
-    Guillotine::App.set :required_host, nil
-  end
-
-  def app
-    Guillotine::App
+    def app
+      Guillotine::App
+    end
   end
 end
+
