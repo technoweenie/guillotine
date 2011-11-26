@@ -1,0 +1,2 @@
+bundle install --binstubs --path vendor/gems
+bin/rake 
