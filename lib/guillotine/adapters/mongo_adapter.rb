@@ -6,6 +6,12 @@ module Guillotine
       def initialize(collection)
         @collection = collection
         @collection.ensure_index([['url',  Mongo::ASCENDING]])
+
+        # \m/
+        @transformers = {
+          :url => lambda { |doc| doc['url'] },
+          :code => lambda { |doc| doc['_id'] }
+        }
       end
       
       # Public: Stores the shortened version of a URL.
@@ -26,7 +32,7 @@ module Guillotine
       #
       # Returns the String URL, or nil if none is found.
       def find(code)
-        @collection.find_one({:_id => code}, {:transformer => lambda {|doc| doc['url'] }})
+        select :url, :_id => code
       end
 
       # Public: Retrieves the code for a given URL.
@@ -35,7 +41,7 @@ module Guillotine
       #
       # Returns the String code, or nil if none is found.
       def code_for(url)
-        @collection.find_one({:url => url}, {:transformer => lambda {|doc| doc['_id'] }})
+        select :code, :url => url
       end
 
       # Public: Removes the assigned short code for a URL.
@@ -45,6 +51,10 @@ module Guillotine
       # Returns nothing.
       def clear(url)
         @collection.remove(:url => url)
+      end
+
+      def select(field, query)
+        @collection.find_one(query, {:transformer => @transformers[field]})
       end
       
     private

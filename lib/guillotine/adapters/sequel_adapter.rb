@@ -37,9 +37,7 @@ module Guillotine
       #
       # Returns the String URL.
       def find(code)
-        if row = @table.select(:url).where(:code => code).first
-          row[:url]
-        end
+        select :url, :code => code
       end
 
       # Public: Retrieves the code for a given URL.
@@ -48,9 +46,7 @@ module Guillotine
       #
       # Returns the String code, or nil if none is found.
       def code_for(url)
-        if row = @table.select(:code).where(:url => url).first
-          row[:code]
-        end
+        select :code, :url => url
       end
 
       # Public: Removes the assigned short code for a URL.
@@ -69,6 +65,12 @@ module Guillotine
 
           unique :url
           unique :code
+        end
+      end
+
+      def select(field, query)
+        if row = @table.select(field).where(query).first
+          row[field]
         end
       end
     end
