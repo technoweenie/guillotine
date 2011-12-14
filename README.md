@@ -11,7 +11,8 @@ The easiest way to use it is with the built-in memory adapter.
 require 'guillotine'
 module MyApp
   class App < Guillotine::App
-    set :db => Guillotine::Adapters::MemoryAdapter.new
+    adapter = Guillotine::Adapters::MemoryAdapter.new
+    set :service => Guillotine::Service.new(adapter)
 
     get '/' do
       redirect 'https://homepage.com'
@@ -40,19 +41,24 @@ You can specify your own code too:
 
 ## Sequel
 
-The memory adapter sucks though.  You probably want to use a DB.
+The memory adapter sucks though.  You probably want to use a DB.  Check
+out the [Sequel gem](http://sequel.rubyforge.org/) for more examples.
+It'll support SQLite, MySQL, PostgreSQL, and a bunch of other databases.
 
 ```ruby
 require 'guillotine'
 require 'sequel'
 module MyApp
   class App < Guillotine::App
-    set :db => Guillotine::Adapters::SequelAdapter.new(Sequel.sqlite)
+    db = Sequel.sqlite 
+    adapter = Guillotine::Adapters::SequelAdapter.new(db)
+    set :service => Guillotine::Service.new(adapter)
   end
 end
 ```
 
-or the mysql way
+You'll need to initialize the DB schema with something like this
+(depending on which DB you use):
 
 ```
 CREATE TABLE IF NOT EXISTS `urls` (
@@ -64,15 +70,6 @@ CREATE TABLE IF NOT EXISTS `urls` (
 
 ```
 
-```ruby
-require 'guillotine'
-require 'sequel'
-module MyApp
-  class App < Guillotine::App
-   set :db => Guillotine::Adapters::SequelAdapter.new(Sequel.connect('mysql://USER:PASSWD@HOST/DATABASE'))
-  end
-end
-```
 ## Riak
 
 If you need to scale out your url shortening services across the cloud,
@@ -85,7 +82,8 @@ module MyApp
   class App < Guillotine::App
     client = Riak::Client.new :protocol => 'pbc', :pb_port => 8087
     bucket = client['guillotine']
-    set :db => Guillotine::Adapters::RiakAdapter.new(bucket)
+    adapter = Guillotine::Adapters::RiakAdapter.new(bucket)
+    set :service => Guillotine::Service.new(adapter)
   end
 end
 ```
@@ -98,11 +96,14 @@ You can restrict what domains that Guillotine will shorten.
 require 'guillotine'
 module MyApp
   class App < Guillotine::App
+    adapter = Guillotine::Adapters::MemoryAdapter.new
     # only this domain
-    set :required_host, 'github.com'
+    set :service => Guillotine::Service.new(adapter,
+      'github.com')
 
     # or, any *.github.com domain
-    set :required_host, /(^|\.)github\.com$/
+    set :service => Guillotine::Service.new(adapter,
+      /(^|\.)github\.com$/)
   end
 end
 ```
