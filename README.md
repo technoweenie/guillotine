@@ -52,6 +52,27 @@ module MyApp
 end
 ```
 
+or the mysql way
+
+```
+CREATE TABLE IF NOT EXISTS `urls` (
+  `url` varchar(255) DEFAULT NULL,
+  `code` varchar(255) DEFAULT NULL,
+  UNIQUE KEY `url` (`url`),
+  UNIQUE KEY `code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+```
+
+```ruby
+require 'guillotine'
+require 'sequel'
+module MyApp
+  class App < Guillotine::App
+   set :db => Guillotine::Adapters::SequelAdapter.new(Sequel.connect('mysql://USER:PASSWD@HOST/DATABASE'))
+  end
+end
+```
 ## Riak
 
 If you need to scale out your url shortening services across the cloud,
