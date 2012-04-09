@@ -1,0 +1,195 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Guillotine by technoweenie</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/technoweenie/guillotine">Fork On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/technoweenie/guillotine/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/technoweenie/guillotine/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Guillotine</h1>
+          <p>URL shortening hobby kit</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/technoweenie">technoweenie</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>Guillotine</h1>
+
+<p>Simple URL Shortener hobby kit.  Currently used to shorten URLs at GitHub.com, and also available as a an <a href="https://github.com/mrtazz/katana">installable Heroku app</a>.</p>
+
+<h2>USAGE</h2>
+
+<p>The easiest way to use it is with the built-in memory adapter.</p>
+
+<div class="highlight">
+<pre><span class="c1"># app.rb</span>
+<span class="nb">require</span> <span class="s1">'guillotine'</span>
+<span class="k">module</span> <span class="nn">MyApp</span>
+  <span class="k">class</span> <span class="nc">App</span> <span class="o">&lt;</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">App</span>
+    <span class="n">adapter</span> <span class="o">=</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">Adapters</span><span class="o">::</span><span class="no">MemoryAdapter</span><span class="o">.</span><span class="n">new</span>
+    <span class="n">set</span> <span class="ss">:service</span> <span class="o">=&gt;</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">Service</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">adapter</span><span class="p">)</span>
+
+    <span class="n">get</span> <span class="s1">'/'</span> <span class="k">do</span>
+      <span class="n">redirect</span> <span class="s1">'<a href="https://homepage.com">https://homepage.com</a>'</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<div class="highlight">
+<pre><span class="c1"># config.ru</span>
+<span class="nb">require</span> <span class="s2">"rubygems"</span>
+<span class="nb">require</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">"../app.rb"</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
+<span class="n">run</span> <span class="no">MyApp</span><span class="o">::</span><span class="no">App</span>
+</pre>
+</div>
+
+
+<p>Once it's running, add URLs with a simple POST.</p>
+
+<pre><code>curl http://localhost:4567 -i \
+  -F "url=<a href="http://techno-weenie.net">http://techno-weenie.net</a>"
+</code></pre>
+
+<p>You can specify your own code too:</p>
+
+<pre><code>curl http://localhost:4567 -i \
+  -F "url=<a href="http://techno-weenie.net">http://techno-weenie.net</a>" \
+  -F "code=abc"
+</code></pre>
+
+<h2>Sequel</h2>
+
+<p>The memory adapter sucks though.  You probably want to use a DB.  Check
+out the <a href="http://sequel.rubyforge.org/">Sequel gem</a> for more examples.
+It'll support SQLite, MySQL, PostgreSQL, and a bunch of other databases.</p>
+
+<div class="highlight">
+<pre><span class="nb">require</span> <span class="s1">'guillotine'</span>
+<span class="nb">require</span> <span class="s1">'sequel'</span>
+<span class="k">module</span> <span class="nn">MyApp</span>
+  <span class="k">class</span> <span class="nc">App</span> <span class="o">&lt;</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">App</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="no">Sequel</span><span class="o">.</span><span class="n">sqlite</span> 
+    <span class="n">adapter</span> <span class="o">=</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">Adapters</span><span class="o">::</span><span class="no">SequelAdapter</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+    <span class="n">set</span> <span class="ss">:service</span> <span class="o">=&gt;</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">Service</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">adapter</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>You'll need to initialize the DB schema with something like this
+(depending on which DB you use):</p>
+
+<pre><code>CREATE TABLE IF NOT EXISTS `urls` (
+  `url` varchar(255) DEFAULT NULL,
+  `code` varchar(255) DEFAULT NULL,
+  UNIQUE KEY `url` (`url`),
+  UNIQUE KEY `code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+</code></pre>
+
+<h2>Redis</h2>
+
+<p>Redis works well, too.  The sample below is <a href="https://github.com/mrtazz/katana/blob/master/app.rb">adapted</a> from <a href="https://github.com/mrtazz/katana">Katana</a>, a hosted wrapper around Guillotine designed for Heroku.</p>
+
+<div class="highlight">
+<pre><span class="nb">require</span> <span class="s1">'guillotine'</span>
+<span class="nb">require</span> <span class="s1">'redis'</span>
+
+<span class="k">module</span> <span class="nn">MyApp</span>
+  <span class="k">class</span> <span class="nc">App</span> <span class="o">&lt;</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">App</span>
+    <span class="c1"># use redis adapter with redistogo on Heroku</span>
+    <span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="no">ENV</span><span class="o">[</span><span class="s2">"REDISTOGO_URL"</span><span class="o">]</span><span class="p">)</span>
+    <span class="n">redis</span> <span class="o">=</span> <span class="no">Redis</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:host</span> <span class="o">=&gt;</span> <span class="n">uri</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="ss">:port</span> <span class="o">=&gt;</span> <span class="n">uri</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="ss">:password</span> <span class="o">=&gt;</span> <span class="n">uri</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+    <span class="n">adapter</span> <span class="o">=</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">Adapters</span><span class="o">::</span><span class="no">RedisAdapter</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">redis</span><span class="p">)</span>
+    <span class="n">set</span> <span class="ss">:service</span> <span class="o">=&gt;</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">Service</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">adapter</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<h2>Riak</h2>
+
+<p>If you need to scale out your url shortening services across the cloud,
+you can use Riak!</p>
+
+<div class="highlight">
+<pre><span class="nb">require</span> <span class="s1">'guillotine'</span>
+<span class="nb">require</span> <span class="s1">'riak/client'</span>
+<span class="k">module</span> <span class="nn">MyApp</span>
+  <span class="k">class</span> <span class="nc">App</span> <span class="o">&lt;</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">App</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="no">Riak</span><span class="o">::</span><span class="no">Client</span><span class="o">.</span><span class="n">new</span> <span class="ss">:protocol</span> <span class="o">=&gt;</span> <span class="s1">'pbc'</span><span class="p">,</span> <span class="ss">:pb_port</span> <span class="o">=&gt;</span> <span class="mi">8087</span>
+    <span class="n">bucket</span> <span class="o">=</span> <span class="n">client</span><span class="o">[</span><span class="s1">'guillotine'</span><span class="o">]</span>
+    <span class="n">adapter</span> <span class="o">=</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">Adapters</span><span class="o">::</span><span class="no">RiakAdapter</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">bucket</span><span class="p">)</span>
+    <span class="n">set</span> <span class="ss">:service</span> <span class="o">=&gt;</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">Service</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">adapter</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<h2>Domain Restriction</h2>
+
+<p>You can restrict what domains that Guillotine will shorten.</p>
+
+<div class="highlight">
+<pre><span class="nb">require</span> <span class="s1">'guillotine'</span>
+<span class="k">module</span> <span class="nn">MyApp</span>
+  <span class="k">class</span> <span class="nc">App</span> <span class="o">&lt;</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">App</span>
+    <span class="n">adapter</span> <span class="o">=</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">Adapters</span><span class="o">::</span><span class="no">MemoryAdapter</span><span class="o">.</span><span class="n">new</span>
+    <span class="c1"># only this domain</span>
+    <span class="n">set</span> <span class="ss">:service</span> <span class="o">=&gt;</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">Service</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">adapter</span><span class="p">,</span>
+      <span class="s1">'github.com'</span><span class="p">)</span>
+
+    <span class="c1"># or, any *.github.com domain</span>
+    <span class="n">set</span> <span class="ss">:service</span> <span class="o">=&gt;</span> <span class="no">Guillotine</span><span class="o">::</span><span class="no">Service</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">adapter</span><span class="p">,</span>
+      <span class="sr">/(^|\.)github\.com$/</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<h2>Not TODO</h2>
+
+<ul>
+<li>Statistics</li>
+<li>Authentication</li>
+</ul>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+    
+  </body>
+</html>
