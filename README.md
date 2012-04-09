@@ -1,6 +1,6 @@
 # Guillotine
 
-Simple URL Shortener hobby kit.
+Simple URL Shortener hobby kit.  Currently used to shorten URLs at GitHub.com, and also available as a an [installable Heroku app](https://github.com/mrtazz/katana).
 
 ## USAGE
 
@@ -67,7 +67,25 @@ CREATE TABLE IF NOT EXISTS `urls` (
   UNIQUE KEY `url` (`url`),
   UNIQUE KEY `code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
 
+## Redis
+
+Redis works well, too.  The sample below is [adapted](https://github.com/mrtazz/katana/blob/master/app.rb) from [Katana](https://github.com/mrtazz/katana), a hosted wrapper around Guillotine designed for Heroku.
+
+```ruby
+require 'guillotine'
+require 'redis'
+
+module MyApp
+  class App < Guillotine::App
+    # use redis adapter with redistogo on Heroku
+    uri = URI.parse(ENV["REDISTOGO_URL"])
+    redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+    adapter = Guillotine::Adapters::RedisAdapter.new(redis)
+    set :service => Guillotine::Service.new(adapter)
+  end
+end
 ```
 
 ## Riak
