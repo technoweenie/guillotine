@@ -13,9 +13,9 @@ module Guillotine
           :code => lambda { |doc| doc['_id'] }
         }
       end
-      
+
       # Public: Stores the shortened version of a URL.
-      # 
+      #
       # url  - The String URL to shorten and store.
       # code - Optional String code for the URL.
       #
@@ -25,7 +25,7 @@ module Guillotine
         code_for(url) || insert(url, code || shorten(url))
       end
 
-      
+
       # Public: Retrieves a URL from the code.
       #
       # code - The String code to lookup the URL.
@@ -56,7 +56,7 @@ module Guillotine
       def select(field, query)
         @collection.find_one(query, {:transformer => @transformers[field]})
       end
-      
+
     private
       def insert(url, code)
         if existing_url = find(code)

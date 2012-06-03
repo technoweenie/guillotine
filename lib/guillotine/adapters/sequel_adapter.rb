@@ -5,9 +5,9 @@ module Guillotine
         @db = db
         @table = @db[:urls]
       end
-      
+
       # Public: Stores the shortened version of a URL.
-      # 
+      #
       # url  - The String URL to shorten and store.
       # code - Optional String code for the URL.
       #

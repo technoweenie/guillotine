@@ -1,6 +1,6 @@
 module Guillotine
-  class Service 
-    class NullChecker 
+  class Service
+    class NullChecker
       def call(url)
       end
     end
@@ -44,7 +44,7 @@ module Guillotine
       if resp = check_host(url)
         return resp
       end
-      
+
       begin
         if code = @db.add(url.to_s, code)
           [201, {"Location" => code}]
