@@ -4,8 +4,7 @@ module Guillotine
     class MemoryAdapter < Adapter
       attr_reader :hash, :urls
       def initialize
-        @hash = {}
-        @urls = {}
+        reset
       end
 
       # Public: Stores the shortened version of a URL.
@@ -56,6 +55,11 @@ module Guillotine
         if code = @urls.delete(url)
           @hash.delete code
         end
+      end
+
+      def reset
+        @hash = {}
+        @urls = {}
       end
     end
   end
