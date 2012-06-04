@@ -76,7 +76,7 @@ module Guillotine
     def initialize(pattern)
       @pattern = pattern
       @host = self.class.host_from(pattern)
-      @regex = %r{^([\w\.]+\.)?#{Regexp.escape @host}$}
+      @regex = %r{(^|\.)#{Regexp.escape @host}$}
       super(@regex)
       @error = "URL must be from #{@host}"
     end
