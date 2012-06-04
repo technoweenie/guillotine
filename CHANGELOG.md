@@ -1,6 +1,10 @@
 # Changelog
 
-## master
+## v1.2.1
+
+* Fix WildcardHostChecker error responses.
+
+## v1.2.0
 
 * Add a simple wildcard host checker.
 
