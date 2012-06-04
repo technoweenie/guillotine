@@ -1,6 +1,7 @@
 module Guillotine
   class Service
-    NullChecker = Guillotine::NullHostChecker
+    # Deprecated until v2
+    NullChecker = Guillotine::HostChecker
 
     # This is the public API to the Guillotine service.  Wire this up to Sinatra
     # or whatever.  Every public method should return a compatible Rack Response:
@@ -12,7 +13,7 @@ module Guillotine
     #
     def initialize(db, required_host = nil)
       @db = db
-      build_host_check(required_host)
+      @host_check = HostChecker.matching(required_host)
     end
 
     # Public: Gets the full URL for a shortened code.
@@ -64,49 +65,6 @@ module Guillotine
         [422, {}, "Invalid url: #{url}"]
       else
         @host_check.call url
-      end
-    end
-
-    # Converts the `required_host` argument to a lambda for #check_host.
-    #
-    # host_check - Either a String or Regex limiting which domains the
-    #              shortened URLs can come from.
-    #
-    # Returns nothing.
-    def build_host_check(host_check)
-      case host_check
-      when nil
-        @host_check = NullChecker.new
-      when Regexp
-        build_host_regex_check(host_check)
-      else
-        build_host_string_check(host_check.to_s)
-      end
-    end
-
-    # Builds the host check lambda for regexes.
-    #
-    # regex - The Regexp that limits allowable URL hosts.
-    #
-    # Returns a Lambda that verifies an Addressible::URI.
-    def build_host_regex_check(regex)
-      @host_check = lambda do |url|
-        if url.host.to_s !~ regex
-          [422, {}, "URL must match #{regex.inspect}"]
-        end
-      end
-    end
-
-    # Builds the host check lambda for Strings.
-    #
-    # hostname - The String that limits allowable URL hosts.
-    #
-    # Returns a Lambda that verifies an Addressible::URI.
-    def build_host_string_check(hostname)
-      @host_check = lambda do |url|
-        if url.host != hostname
-          [422, {}, "URL must be from #{hostname}"]
-        end
       end
     end
 
