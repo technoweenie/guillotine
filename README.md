@@ -122,6 +122,10 @@ module MyApp
     # or, any *.github.com domain
     set :service => Guillotine::Service.new(adapter,
       /(^|\.)github\.com$/)
+
+    # or set a simple wildcard
+    set :service => Guillotine::Servicew.new(adapter,
+      '*.github.com')
   end
 end
 ```
