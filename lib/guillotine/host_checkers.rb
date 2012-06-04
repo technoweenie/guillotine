@@ -11,6 +11,8 @@ module Guillotine
       @all ||= []
     end
 
+    attr_reader :error, :error_response
+
     def initialize(arg = nil)
       @error_response = [422, {}, @error]
     end
@@ -60,6 +62,26 @@ module Guillotine
     end
   end
 
-  HostChecker.all << RegexHostChecker << StringHostChecker
+  class WildcardHostChecker < RegexHostChecker
+    def self.match?(arg)
+      arg.to_s =~ /^\*\.([\w\.]+)$/ && $1
+    end
+
+    class << self
+      alias host_from match?
+    end
+
+    attr_reader :pattern, :host
+
+    def initialize(pattern)
+      @pattern = pattern
+      @host = self.class.host_from(pattern)
+      @regex = %r{^([\w\.]+\.)?#{Regexp.escape @host}$}
+      super(@regex)
+      @error = "URL must be from #{@host}"
+    end
+  end
+
+  HostChecker.all << RegexHostChecker << WildcardHostChecker << StringHostChecker
 end
 

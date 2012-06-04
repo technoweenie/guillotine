@@ -8,6 +8,12 @@ module Guillotine
       assert_equal /a/, checker.regex
     end
 
+    def test_wildcard_checker_is_matched
+      checker = HostChecker.matching('*.foo.com')
+      assert_kind_of WildcardHostChecker, checker
+      assert_equal 'foo.com', checker.host
+    end
+
     def test_string_checker_is_matched
       checker = HostChecker.matching('foo.com')
       assert_kind_of StringHostChecker, checker
@@ -55,6 +61,28 @@ module Guillotine
     end
   end
 
+  class WildcardHostCheckerTest < CheckerTest
+    def build_checker
+      WildcardHostChecker.new '*.foo.com'
+    end
+
+    def allowed_urls
+      %w(foo.com foo.com/a abc.foo.com/a)
+    end
+
+    def rejected_urls
+      %w(bar.com foo.com.uk)
+    end
+
+    def test_parses_host
+      assert_equal 'foo.com', checker.host
+    end
+
+    def test_builds_custom_error
+      assert_match /must be from foo\.com/, checker.error
+    end
+  end
+
   class StringHostCheckerTest < CheckerTest
     def build_checker
       StringHostChecker.new('foo.com')
@@ -71,15 +99,15 @@ module Guillotine
 
   class RegexHostCheckerTest < CheckerTest
     def build_checker
-      RegexHostChecker.new(/^([\w\.]+\.)?foo\.com$/)
+      RegexHostChecker.new(/a/)
     end
 
     def allowed_urls
-      %w(foo.com foo.com/a abc.foo.com/a)
+      %w(abc.com aaa.com)
     end
 
     def rejected_urls
-      %w(bar.com foo.com.uk)
+      %w(b.com)
     end
   end
 end
