@@ -1,9 +1,6 @@
 module Guillotine
   class Service
-    class NullChecker
-      def call(url)
-      end
-    end
+    NullChecker = Guillotine::NullHostChecker
 
     # This is the public API to the Guillotine service.  Wire this up to Sinatra
     # or whatever.  Every public method should return a compatible Rack Response:

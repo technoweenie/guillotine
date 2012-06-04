@@ -5,9 +5,6 @@ require 'addressable/uri'
 module Guillotine
   VERSION = "1.1.0"
 
-  dir = File.expand_path '../guillotine', __FILE__
-  require "#{dir}/service"
-  autoload :App, "#{dir}/app"
 
   class DuplicateCodeError < StandardError
     attr_reader :existing_url, :new_url, :code
@@ -19,14 +16,6 @@ module Guillotine
       super "#{@new_url.inspect} was supposed to be shortened to #{@code.inspect}, but #{@existing_url.inspect} already is!"
     end
   end
-
-  dir = File.expand_path '../guillotine/adapters', __FILE__
-  autoload :MemoryAdapter,       "#{dir}/memory_adapter"
-  autoload :SequelAdapter,       "#{dir}/sequel_adapter"
-  autoload :RiakAdapter,         "#{dir}/riak_adapter"
-  autoload :ActiveRecordAdapter, "#{dir}/active_record_adapter"
-  autoload :RedisAdapter,        "#{dir}/redis_adapter"
-  autoload :MongoAdapter,        "#{dir}/mongo_adapter"
 
   # Adapters handle the storage and retrieval of URLs in the system.  You can
   # use whatever you want, as long as it implements the #add and #find
@@ -57,6 +46,21 @@ module Guillotine
       Addressable::URI.parse url
     end
   end
+
+  dir = File.expand_path '../guillotine/host_checkers', __FILE__
+  autoload :NullHostChecker, dir + '/null_host_checker'
+
+  dir = File.expand_path '../guillotine/adapters', __FILE__
+  autoload :MemoryAdapter,       dir + "/memory_adapter"
+  autoload :SequelAdapter,       dir + "/sequel_adapter"
+  autoload :RiakAdapter,         dir + "/riak_adapter"
+  autoload :ActiveRecordAdapter, dir + "/active_record_adapter"
+  autoload :RedisAdapter,        dir + "/redis_adapter"
+  autoload :MongoAdapter,        dir + "/mongo_adapter"
+
+  dir = File.expand_path '../guillotine', __FILE__
+  autoload :App, "#{dir}/app"
+  require "#{dir}/service"
 
   module Adapters
     @@warned = false
