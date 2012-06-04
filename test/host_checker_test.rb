@@ -71,7 +71,7 @@ module Guillotine
     end
 
     def rejected_urls
-      %w(bar.com foo.com.uk)
+      %w(bar.com foo.com.uk foobcom)
     end
 
     def test_parses_host
