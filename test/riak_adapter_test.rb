@@ -12,14 +12,14 @@ begin
   # Assumes a local dev install of riak is setup
   #
   #   http://wiki.basho.com/Building-a-Development-Environment.html
-  # 
+  #
   # Riak should be accessible from:
   #
   #   http://localhost:8091/riak/guillotine-test
   class RiakAdapterTest < Guillotine::TestCase
     CODE_BUCKET = RIAK_TEST_CLIENT["guillotine-code-test-#{Process.pid}"]
     URL_BUCKET  = RIAK_TEST_CLIENT["guillotine-url-test-#{Process.pid}"]
-    ADAPTER = Guillotine::Adapters::RiakAdapter.new CODE_BUCKET, URL_BUCKET
+    ADAPTER = Guillotine::RiakAdapter.new CODE_BUCKET, URL_BUCKET
 
     def setup
       @db = ADAPTER

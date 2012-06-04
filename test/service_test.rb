@@ -3,7 +3,7 @@ require File.expand_path('../helper', __FILE__)
 module Guillotine
   class ServiceTest < TestCase
     def setup
-      @db = Adapters::MemoryAdapter.new
+      @db = MemoryAdapter.new
       @service = Service.new @db
     end
 

@@ -3,7 +3,7 @@ require File.expand_path('../helper', __FILE__)
 begin
   require 'sequel'
   class SequelAdapterTest < Guillotine::TestCase
-    ADAPTER = Guillotine::Adapters::SequelAdapter.new Sequel.sqlite
+    ADAPTER = Guillotine::SequelAdapter.new Sequel.sqlite
     ADAPTER.setup
 
     def setup

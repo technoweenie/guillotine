@@ -7,7 +7,7 @@ module Guillotine
 
     # This is the public API to the Guillotine service.  Wire this up to Sinatra
     # or whatever.  Every public method should return a compatible Rack Response:
-    # [Integer Status, Hash headers, String body].  
+    # [Integer Status, Hash headers, String body].
     #
     # db            - A Guillotine::Adapter instance.
     # required_host - Either a String or Regex limiting which domains the

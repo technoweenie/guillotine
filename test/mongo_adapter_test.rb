@@ -7,7 +7,7 @@ begin
     def setup
       @collection = Mongo::Connection.new.db('test').collection('guillotine')
       @collection.drop
-      @db = Guillotine::Adapters::MongoAdapter.new(@collection)
+      @db = Guillotine::MongoAdapter.new(@collection)
     end
 
     def test_adding_a_link_returns_code

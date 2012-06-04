@@ -5,7 +5,7 @@ begin
 
   class RedisAdapterTest < Guillotine::TestCase
     redis = Redis.new
-    ADAPTER = Guillotine::Adapters::RedisAdapter.new redis
+    ADAPTER = Guillotine::RedisAdapter.new redis
 
     def setup
       @db = ADAPTER

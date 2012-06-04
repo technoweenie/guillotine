@@ -2,7 +2,7 @@ require File.expand_path('../helper', __FILE__)
 
 module Guillotine
   class AppTest < TestCase
-    ADAPTER = Adapters::MemoryAdapter.new
+    ADAPTER = MemoryAdapter.new
     SERVICE = Service.new(ADAPTER)
     App.set :service, SERVICE
 

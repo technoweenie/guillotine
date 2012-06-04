@@ -3,7 +3,7 @@ require File.expand_path('../helper', __FILE__)
 begin
   require 'active_record'
   class ActiveRecordAdapterTest < Guillotine::TestCase
-    ADAPTER = Guillotine::Adapters::ActiveRecordAdapter.new :adapter => 'sqlite3', :database => ':memory:'
+    ADAPTER = Guillotine::ActiveRecordAdapter.new :adapter => 'sqlite3', :database => ':memory:'
     ADAPTER.setup
 
     def setup
