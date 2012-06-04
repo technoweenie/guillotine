@@ -11,10 +11,10 @@ module Guillotine
       @all ||= []
     end
 
-    attr_reader :error, :error_response
+    attr_reader :error
 
     def initialize(arg = nil)
-      @error_response = [422, {}, @error]
+      @error_response = nil
     end
 
     def valid?(url)
@@ -22,7 +22,11 @@ module Guillotine
     end
 
     def call(url)
-      @error_response unless valid?(url)
+      error_response unless valid?(url)
+    end
+
+    def error_response
+      @error_response ||= [422, {}, @error]
     end
   end
 

@@ -79,7 +79,7 @@ module Guillotine
     end
 
     def test_builds_custom_error
-      assert_match /must be from foo\.com/, checker.error
+      assert_match /must be from foo\.com/, checker.error_response[2]
     end
   end
 
