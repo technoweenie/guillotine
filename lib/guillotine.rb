@@ -49,9 +49,6 @@ module Guillotine
     end
   end
 
-  dir = File.expand_path '../guillotine/host_checkers', __FILE__
-  autoload :NullHostChecker, dir + '/null_host_checker'
-
   dir = File.expand_path '../guillotine/adapters', __FILE__
   autoload :MemoryAdapter,       dir + "/memory_adapter"
   autoload :SequelAdapter,       dir + "/sequel_adapter"
@@ -62,6 +59,8 @@ module Guillotine
 
   dir = File.expand_path '../guillotine', __FILE__
   autoload :App, "#{dir}/app"
+
+  require "#{dir}/host_checkers"
   require "#{dir}/service"
 
   module Adapters
