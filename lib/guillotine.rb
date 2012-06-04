@@ -59,7 +59,13 @@ module Guillotine
   end
 
   module Adapters
+    @@warned = false
     def self.const_missing(*args)
+      unless @@warned
+        puts "Guillotine::Adapters has been deprecated until v2."
+        @@warned = true
+      end
+      puts "Change Guillotine::Adapters::#{args.first} => Guillotine::#{args.first}"
       ::Guillotine.const_get(args.first)
     end
   end
