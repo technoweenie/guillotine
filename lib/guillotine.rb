@@ -5,8 +5,10 @@ require 'addressable/uri'
 module Guillotine
   VERSION = "1.1.0"
 
+  class Error < StandardError
+  end
 
-  class DuplicateCodeError < StandardError
+  class DuplicateCodeError < Error
     attr_reader :existing_url, :new_url, :code
 
     def initialize(existing_url, new_url, code)
