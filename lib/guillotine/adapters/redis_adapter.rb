@@ -15,15 +15,15 @@ module Guillotine
     # Returns the unique String code for the URL.  If the URL is added
     # multiple times, this should return the same code.
     def add(url, code = nil)
-      if existing_code = @redis.get("guillotine:urls:#{url}")
+      if existing_code = @redis.get(url_key(url))
         existing_code
       else
         code ||= shorten(url)
-        if existing_url = @redis.get("guillotine:hash:#{code}")
+        if existing_url = @redis.get(code_key(code))
           raise DuplicateCodeError.new(existing_url, url, code) if url != existing_url
         end
-        @redis.set "guillotine:hash:#{code}", url
-        @redis.set "guillotine:urls:#{url}", code
+        @redis.set code_key(code), url
+        @redis.set url_key(url), code
         code
       end
     end
@@ -34,7 +34,7 @@ module Guillotine
     #
     # Returns the String URL, or nil if none is found.
     def find(code)
-      @redis.get "guillotine:hash:#{code}"
+      @redis.get code_key(code)
     end
 
     # Public: Retrieves the code for a given URL.
@@ -43,7 +43,7 @@ module Guillotine
     #
     # Returns the String code, or nil if none is found.
     def code_for(url)
-      @redis.get "guillotine:urls:#{url}"
+      @redis.get url_key(url)
     end
 
     # Public: Removes the assigned short code for a URL.
@@ -52,10 +52,18 @@ module Guillotine
     #
     # Returns nothing.
     def clear(url)
-      if code = @redis.get("guillotine:urls:#{url}")
-        @redis.del "guillotine:urls:#{url}"
-        @redis.del "guillotine:hash:#{code}"
+      if code = @redis.get(url_key(url))
+        @redis.del url_key(url)
+        @redis.del code_key(code)
       end
+    end
+
+    def code_key(code)
+      "guillotine:hash:#{code}"
+    end
+
+    def url_key(url)
+      "guillotine:urls:#{url}"
     end
   end
 end
