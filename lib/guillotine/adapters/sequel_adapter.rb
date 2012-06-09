@@ -12,11 +12,11 @@ module Guillotine
     #
     # Returns the unique String code for the URL.  If the URL is added
     # multiple times, this should return the same code.
-    def add(url, code = nil)
+    def add(url, code = nil, length = nil, charset = nil)
       if existing = code_for(url)
         existing
       else
-        code ||= shorten url
+        code = get_code(url, code, length, charset)
         begin
           @table << {:url => url, :code => code}
         rescue Sequel::DatabaseError

@@ -5,6 +5,7 @@ module Guillotine
   # output is fit Sinatra to return.
   class App < Sinatra::Base
     set :service, nil
+    set :shortener, :default
 
     get "/:code" do
       escaped = Addressable::URI.escape(params[:code])

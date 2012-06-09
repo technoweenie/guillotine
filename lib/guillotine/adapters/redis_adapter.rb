@@ -14,11 +14,12 @@ module Guillotine
     #
     # Returns the unique String code for the URL.  If the URL is added
     # multiple times, this should return the same code.
-    def add(url, code = nil)
+    def add(url, code = nil, length = nil, charset = nil)
       if existing_code = @redis.get(url_key(url))
         existing_code
-      else
-        code ||= shorten(url)
+      else 
+        code = get_code(url, code, length, charset)
+       
         if existing_url = @redis.get(code_key(code))
           raise DuplicateCodeError.new(existing_url, url, code) if url != existing_url
         end

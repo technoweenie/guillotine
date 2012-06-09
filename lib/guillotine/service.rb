@@ -11,9 +11,12 @@ module Guillotine
     # required_host - Either a String or Regex limiting which domains the
     #                 shortened URLs can come from.
     #
-    def initialize(db, required_host = nil)
+    def initialize(db, required_host = nil, length = nil, charset = nil )
       @db = db
       @host_check = HostChecker.matching(required_host)
+
+      @length = length
+      @charset = charset
     end
 
     # Public: Gets the full URL for a shortened code.

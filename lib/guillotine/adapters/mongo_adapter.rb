@@ -20,8 +20,8 @@ module Guillotine
     #
     # Returns the unique String code for the URL.  If the URL is added
     # multiple times, this should return the same code.
-    def add(url, code = nil)
-      code_for(url) || insert(url, code || shorten(url))
+    def add(url, code = nil, length = nil, charset = nil)
+      code_for(url) || insert(url, get_code(url, code, length, charset))
     end
 
 
