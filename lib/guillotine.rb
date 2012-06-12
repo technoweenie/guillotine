@@ -62,10 +62,10 @@ module Guillotine
     end
 
     def get_code(url, code, length, charset)
-      if length.nil?
+      if length.nil? || charset.nil?
         code ||= shorten url
       else
-        code ||= shorten_fixed_charset(url, length, char_set)
+        code ||= shorten_fixed_charset(url, length, charset)
       end
       code
     end
