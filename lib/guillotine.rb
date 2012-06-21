@@ -79,6 +79,7 @@ module Guillotine
   autoload :ActiveRecordAdapter, dir + "/active_record_adapter"
   autoload :RedisAdapter,        dir + "/redis_adapter"
   autoload :MongoAdapter,        dir + "/mongo_adapter"
+  autoload :CassandraAdapter,    dir + "/cassandra_adapter"
 
   dir = File.expand_path '../guillotine', __FILE__
   autoload :App, "#{dir}/app"
