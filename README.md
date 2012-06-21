@@ -121,7 +121,8 @@ module MyApp
 
     set :service => Guillotine::Service.new(adapter)
   end
-end```
+end
+```
 
 You need to create keyspace and column families as below
 
@@ -138,7 +139,7 @@ CREATE COLUMN FAMILY codes
 WITH comparator = UTF8Type
 AND key_validation_class=UTF8Type
 AND column_metadata = [{column_name: url, validation_class: UTF8Type}];
-```sql
+```
 
 ## Domain Restriction
 
