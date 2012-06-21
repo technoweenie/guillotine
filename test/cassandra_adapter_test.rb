@@ -6,10 +6,10 @@ begin
   require 'cassandra/mock'
 
   class CassandraAdapterTest < Guillotine::TestCase
-    test_schema = JSON.parse(File.read(File.join(File.expand_path(File.dirname(__FILE__)), '..','config', 'cassandra_config.json')))
-    cassandra_mock = Cassandra::Mock.new('url_shortener', test_schema)
-    cassandra_mock.clear_keyspace!
-    ADAPTER = Guillotine::CassandraAdapter.new cassandra_mock
+    @test_schema = JSON.parse(File.read(File.join(File.expand_path(File.dirname(__FILE__)), '..','config', 'cassandra_config.json')))
+    @cassandra_mock = Cassandra::Mock.new('url_shortener', @test_schema)
+    @cassandra_mock.clear_keyspace!
+    ADAPTER = Guillotine::CassandraAdapter.new @cassandra_mock
 
     def setup
       @db = ADAPTER
@@ -54,7 +54,14 @@ begin
 
       assert_nil @db.find(code)
     end
+
+    def test_read_only
+      Guillotine::CassandraAdapter.new @cassandra_mock, true
+      code = @db.add 'abc'
+      assert_equal nil, code
+    end
   end
+
 rescue LoadError
   puts "Skipping Cassandra tests: #{$!}"
 end

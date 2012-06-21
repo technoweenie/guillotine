@@ -3,8 +3,9 @@ module Guillotine
     # Public: Initialise the adapter with a Redis instance.
     #
     # cassandra - A Cassandra instance to persist urls and codes to.
-    def initialize(cassandra)
+    def initialize(cassandra, read_only = false)
       @cassandra = cassandra
+      @read_only = read_only
     end
 
     # Public: Stores the shortened version of a URL.
@@ -15,6 +16,7 @@ module Guillotine
     # Returns the unique String code for the URL.  If the URL is added
     # multiple times, this should return the same code.
     def add(url, code = nil, length = nil, charset = nil)
+      return if @read_only
       if existing_code = code_for(url)
         existing_code
       else
