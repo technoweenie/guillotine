@@ -79,7 +79,7 @@ module Guillotine
       else
         str = str.to_s
         str.gsub! /\s/, ''
-        str.gsub! /(\#|\?).*/, ''
+        str.gsub! /(\#).*/, ''
         Addressable::URI.parse str
       end
     end
