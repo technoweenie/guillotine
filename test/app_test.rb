@@ -10,7 +10,19 @@ module Guillotine
 
     def test_adding_a_link_returns_code
       url = 'http://github.com'
-      post '/', :url => url + '?a=1'
+      post '/', :url => url
+      assert_equal 201, last_response.status
+      assert code_url = last_response.headers['Location']
+      code = code_url.gsub(/.*\//, '')
+
+      get "/#{code}"
+      assert_equal 302, last_response.status
+      assert_equal url, last_response.headers['Location']
+    end
+
+    def test_adding_a_link_with_query_params_returns_code
+      url = 'http://github.com?a=1'
+      post '/', :url => url
       assert_equal 201, last_response.status
       assert code_url = last_response.headers['Location']
       code = code_url.gsub(/.*\//, '')

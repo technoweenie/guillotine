@@ -44,7 +44,7 @@ module Guillotine
     # Returns an Addressable::URI.
     def parse_url(url)
       url.gsub! /\s/, ''
-      url.gsub! /(\#|\?).*/, ''
+      url.gsub! /(\#).*/, ''
       Addressable::URI.parse url
     end
   end

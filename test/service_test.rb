@@ -9,7 +9,19 @@ module Guillotine
 
     def test_adding_a_link_returns_code
       url = 'http://github.com'
-      status, head, body = @service.create(url + '?a=1')
+      status, head, body = @service.create(url)
+      assert_equal 201, status
+      assert code_url = head['Location']
+      code = code_url.gsub(/.*\//, '')
+
+      status, head, body = @service.get(code)
+      assert_equal 302, status
+      assert_equal url, head['Location']
+    end
+
+    def test_adding_a_link_with_query_param_returns_code
+      url = 'http://github.com?a=1'
+      status, head, body = @service.create(url)
       assert_equal 201, status
       assert code_url = head['Location']
       code = code_url.gsub(/.*\//, '')
