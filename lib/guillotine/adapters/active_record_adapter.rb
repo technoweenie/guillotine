@@ -12,7 +12,8 @@ module Guillotine
     #
     # url  - The String URL to shorten and store.
     # code - Optional String code for the URL.
-    #
+    # length - The maximum length of the short code desired
+    # charset - An array of characters which will be present in short code. eg. ['a', 'b', 'c', 'd', 'e', 'f']
     # Returns the unique String code for the URL.  If the URL is added
     # multiple times, this should return the same code.
     def add(url, code = nil, length = nil, charset = nil)
@@ -20,7 +21,7 @@ module Guillotine
         row[:code]
       else
         code = get_code(url, code, length, charset)
-        
+
         begin
           Url.create :url => url, :code => code
         rescue ActiveRecord::RecordNotUnique, ActiveRecord::StatementInvalid
