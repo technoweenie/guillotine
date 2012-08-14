@@ -116,7 +116,7 @@ require 'cassandra'
 
 module MyApp
   class App < Guillotine::App
-    cassandra = Cassandra.new('Cassandra', '127.0.0.1:9160')
+    cassandra = Cassandra.new('url_shortener', '127.0.0.1:9160')
     adapter = Guillotine::Adapters::CassandraAdapter.new(cassandra)
 
     set :service => Guillotine::Service.new(adapter)
