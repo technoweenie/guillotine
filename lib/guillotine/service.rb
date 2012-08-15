@@ -11,9 +11,13 @@ module Guillotine
     # required_host - Either a String or Regex limiting which domains the
     #                 shortened URLs can come from.
     #
-    def initialize(db, required_host = nil)
+    def initialize(db, required_host = nil, length = nil, charset = nil, default_url = nil )
       @db = db
       @host_check = HostChecker.matching(required_host)
+
+      @length = length
+      @charset = charset
+      @default_url = default_url
     end
 
     # Public: Gets the full URL for a shortened code.
@@ -44,7 +48,7 @@ module Guillotine
       end
 
       begin
-        if code = @db.add(url.to_s, code)
+        if code = @db.add(url.to_s, code, @length, @charset)
           [201, {"Location" => code}]
         else
           [422, {}, "Unable to shorten #{url}"]
@@ -83,5 +87,10 @@ module Guillotine
         Addressable::URI.parse str
       end
     end
+
+    def default_url
+      @default_url
+    end
+
   end
 end

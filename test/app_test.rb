@@ -115,6 +115,18 @@ module Guillotine
       App.set :service, SERVICE
     end
 
+    def test_get_without_code_returns_default_url
+      App.set :service, Service.new(ADAPTER, /abc\.com$/, nil, nil, "http://google.com")
+      get '/'
+      assert_equal "http://google.com", last_response.headers['location']
+    end
+
+    def test_get_without_code_no_default_url
+      App.set :service, Service.new(ADAPTER, /abc\.com$/)
+      get '/'
+      assert_equal nil, last_response.headers['location']
+    end
+
     def app
       App
     end

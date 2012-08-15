@@ -37,6 +37,19 @@ module Guillotine
       Base64.urlsafe_encode64([Digest::MD5.hexdigest(url).to_i(16)].pack("N")).sub(/==\n?$/, '')
     end
 
+    def shorten_fixed_charset(url, length, char_set)
+      number = (Digest::MD5.hexdigest(url).to_i(16) % (char_set.size**length))
+
+      code = ""
+
+      while (number > 0)
+        code =  code + char_set[number % char_set.size]
+        number /= char_set.size
+      end
+
+      code
+    end
+
     # Parses and sanitizes a URL.
     #
     # url - A String URL.
@@ -47,6 +60,16 @@ module Guillotine
       url.gsub! /(\#|\?).*/, ''
       Addressable::URI.parse url
     end
+
+    def get_code(url, code, length, charset)
+      if length.nil? || charset.nil?
+        code ||= shorten url
+      else
+        code ||= shorten_fixed_charset(url, length, charset)
+      end
+      code
+    end
+
   end
 
   dir = File.expand_path '../guillotine/adapters', __FILE__
@@ -56,6 +79,7 @@ module Guillotine
   autoload :ActiveRecordAdapter, dir + "/active_record_adapter"
   autoload :RedisAdapter,        dir + "/redis_adapter"
   autoload :MongoAdapter,        dir + "/mongo_adapter"
+  autoload :CassandraAdapter,    dir + "/cassandra_adapter"
 
   dir = File.expand_path '../guillotine', __FILE__
   autoload :App, "#{dir}/app"

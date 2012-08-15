@@ -17,13 +17,15 @@ module Guillotine
     end
 
     # Public: Stores the shortened version of a URL.
-    # 
+    #
     # url  - The String URL to shorten and store.
     # code - Optional String code for the URL.
+    # length - The maximum length of the short code desired
+    # charset - An array of characters which will be present in short code. eg. ['a', 'b', 'c', 'd', 'e', 'f']
     #
     # Returns the unique String code for the URL.  If the URL is added
     # multiple times, this should return the same code.
-    def add(url, code = nil)
+    def add(url, code = nil, length = nil, charset = nil)
       sha     = url_key url
       url_obj = @url_bucket.get_or_new sha, :r => 1
       if url_obj.raw_data
@@ -31,7 +33,7 @@ module Guillotine
         code = url_obj.data
       end
 
-      code   ||= shorten url
+      code = get_code(url, code, length, charset)
       code_obj = @code_bucket.get_or_new code
       code_obj.content_type = url_obj.content_type = PLAIN
 
