@@ -3,7 +3,11 @@ module Guillotine
     # Deprecated until v2
     NullChecker = Guillotine::HostChecker
 
-    class Options < Struct.new(:required_host, :strip_query, :strip_anchor)
+    # length  - Optional Integer maximum length of the short code desired.
+    # charset - Optional Array of String characters which will be present in
+    #           short code.  eg. ['a', 'b', 'c', 'd', 'e', 'f']
+    class Options < Struct.new(:required_host, :strip_query, :strip_anchor,
+                               :length, :charset, :default_url)
       def self.from(value)
         case value
         when nil, "" then new
@@ -26,6 +30,10 @@ module Guillotine
 
       def strip_anchor?
         strip_anchor != false
+      end
+
+      def with_charset?
+        !(length.nil? || charset.nil?)
       end
 
       def host_checker
@@ -76,7 +84,7 @@ module Guillotine
       end
 
       begin
-        if code = @db.add(url.to_s, code)
+        if code = @db.add(url.to_s, code, @options)
           [201, {"Location" => code}]
         else
           [422, {}, "Unable to shorten #{url}"]
@@ -113,8 +121,14 @@ module Guillotine
       end
     end
 
+    # Internal
     def parse_url(url)
       @db.parse_url(url, @options)
+    end
+
+    # Public
+    def default_url
+      @options.default_url
     end
   end
 end

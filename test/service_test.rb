@@ -122,6 +122,23 @@ module Guillotine
       status, head, body = service.create('http://www.abc.com/def')
       assert_equal 201, status
     end
+
+    def test_fixed_charset_code
+      @db = MemoryAdapter.new
+      length = 4
+      char_set = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+      @service = Service.new @db, nil, length, char_set
+
+      url = 'http://github.com'
+      status, head, body = @service.create(url)
+      assert_equal 201, status
+      assert code_url = head['Location']
+
+      assert_equal 4, code_url.length
+      code_url.each_char do |c|
+        assert char_set.include?(c)
+      end
+    end
   end
 end
 
