@@ -3,6 +3,35 @@ module Guillotine
     # Deprecated until v2
     NullChecker = Guillotine::HostChecker
 
+    class Options < Struct.new(:required_host, :strip_query, :strip_anchor)
+      def self.from(value)
+        case value
+        when nil, "" then new
+        when String then new(value)
+        when Hash then
+          opt = new
+          value.each do |key, value|
+            opt[key] = value
+          end
+          opt
+        else
+          raise ArgumentError, "Unable to convert to Options: #{value.inspect}"
+        end
+      end
+
+      def strip_query?
+        strip_query != false
+      end
+
+      def strip_anchor?
+        strip_anchor != false
+      end
+
+      def host_checker
+        @host_checker ||= HostChecker.matching(required_host)
+      end
+    end
+
     # This is the public API to the Guillotine service.  Wire this up to Sinatra
     # or whatever.  Every public method should return a compatible Rack Response:
     # [Integer Status, Hash headers, String body].
