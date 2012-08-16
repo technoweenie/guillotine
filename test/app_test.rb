@@ -20,9 +20,10 @@ module Guillotine
       assert_equal url, last_response.headers['Location']
     end
 
-    def test_adding_a_link_with_query_params_returns_code
-      url = 'http://github.com?a=1'
-      post '/', :url => url
+    def test_adding_a_link_with_query_params_strips_query
+      query_url = 'http://github.com?a=1'
+      url = 'http://github.com'
+      post '/', :url => query_url
       assert_equal 201, last_response.status
       assert code_url = last_response.headers['Location']
       code = code_url.gsub(/.*\//, '')
@@ -30,6 +31,47 @@ module Guillotine
       get "/#{code}"
       assert_equal 302, last_response.status
       assert_equal url, last_response.headers['Location']
+    end
+
+    def test_adding_a_link_with_query_params_returns_code
+      with_service :strip_query => false do
+        url = 'http://github.com?a=1'
+        post '/', :url => url
+        assert_equal 201, last_response.status
+        assert code_url = last_response.headers['Location']
+        code = code_url.gsub(/.*\//, '')
+
+        get "/#{code}"
+        assert_equal 302, last_response.status
+        assert_equal url, last_response.headers['Location']
+      end
+    end
+
+    def test_adding_a_link_with_anchor_strips_anchor
+      query_url = 'http://github.com?a=1#a'
+      url = 'http://github.com'
+      post '/', :url => query_url
+      assert_equal 201, last_response.status
+      assert code_url = last_response.headers['Location']
+      code = code_url.gsub(/.*\//, '')
+
+      get "/#{code}"
+      assert_equal 302, last_response.status
+      assert_equal url, last_response.headers['Location']
+    end
+
+    def test_adding_a_link_with_anchor_params_returns_code
+      with_service :strip_anchor => false do
+        url = 'http://github.com#a'
+        post '/', :url => url
+        assert_equal 201, last_response.status
+        assert code_url = last_response.headers['Location']
+        code = code_url.gsub(/.*\//, '')
+
+        get "/#{code}"
+        assert_equal 302, last_response.status
+        assert_equal url, last_response.headers['Location']
+      end
     end
 
     def test_adding_duplicate_link_returns_same_code
@@ -113,22 +155,28 @@ module Guillotine
     end
 
     def test_reject_shortened_url_from_other_domain_by_regex
-      App.set :service, Service.new(ADAPTER, /abc\.com$/)
-      post '/', :url => 'http://github.com'
-      assert_equal 422, last_response.status
-      assert_match /must match \/abc\\.com/, last_response.body
+      with_service /abc\.com$/ do
+        post '/', :url => 'http://github.com'
+        assert_equal 422, last_response.status
+        assert_match /must match \/abc\\.com/, last_response.body
 
-      post '/', :url => 'http://abc.com/def'
-      assert_equal 201, last_response.status
+        post '/', :url => 'http://abc.com/def'
+        assert_equal 201, last_response.status
 
-      post '/', :url => 'http://www.abc.com/def'
-      assert_equal 201, last_response.status
-    ensure
-      App.set :service, SERVICE
+        post '/', :url => 'http://www.abc.com/def'
+        assert_equal 201, last_response.status
+      end
     end
 
     def app
       App
+    end
+
+    def with_service(options)
+      App.set :service, Service.new(ADAPTER, options)
+      yield
+    ensure
+      App.set :service, SERVICE
     end
   end
 end

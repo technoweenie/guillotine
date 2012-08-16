@@ -33,6 +33,8 @@ module Guillotine
       end
     end
 
+    attr_reader :db, :options
+
     # This is the public API to the Guillotine service.  Wire this up to Sinatra
     # or whatever.  Every public method should return a compatible Rack Response:
     # [Integer Status, Hash headers, String body].
