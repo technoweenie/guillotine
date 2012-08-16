@@ -6,9 +6,17 @@ module Guillotine
       options = Service::Options.new
       assert_equal options.object_id, Service::Options.from(options).object_id
     end
+
     def test_parses_from_string
       options = Service::Options.from('abc')
       assert_equal 'abc', options.required_host
+      assert options.strip_query?
+      assert options.strip_anchor?
+    end
+
+    def test_parses_from_regex
+      options = Service::Options.from(/abc/)
+      assert_equal /abc/, options.required_host
       assert options.strip_query?
       assert options.strip_anchor?
     end

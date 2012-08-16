@@ -7,7 +7,7 @@ module Guillotine
       def self.from(value)
         case value
         when nil, "" then new
-        when String then new(value)
+        when String, Regexp then new(value)
         when Hash then
           opt = new
           value.each do |key, value|
