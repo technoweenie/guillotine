@@ -127,7 +127,7 @@ module Guillotine
       @db = MemoryAdapter.new
       length = 4
       char_set = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-      @service = Service.new @db, nil, length, char_set
+      @service = Service.new @db, :length => length, :charset => char_set
 
       url = 'http://github.com'
       status, head, body = @service.create(url)
