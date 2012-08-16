@@ -107,7 +107,7 @@ module Guillotine
       if str.respond_to?(:scheme)
         str
       else
-        parse_url(str)
+        parse_url(str.to_s)
       end
     end
 

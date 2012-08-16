@@ -44,10 +44,10 @@ module Guillotine
     #
     # Returns an Addressable::URI.
     def parse_url(url, options)
-      url.gsub! /\s/, ''
-      url.gsub! /\?.*/, '' if options.strip_query?
-      url.gsub! /\#.*/, '' if options.strip_anchor?
-      Addressable::URI.parse url
+      url.gsub!(/\s/, '')
+      url.gsub!(/\?.*/, '') if options.strip_query?
+      url.gsub!(/\#.*/, '') if options.strip_anchor?
+      Addressable::URI.parse(url)
     end
   end
 
