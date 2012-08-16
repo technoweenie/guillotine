@@ -2,6 +2,10 @@ require File.expand_path('../helper', __FILE__)
 
 module Guillotine
   class OptionsTest < TestCase
+    def test_parses_from_options
+      options = Service::Options.new
+      assert_equal options.object_id, Service::Options.from(options).object_id
+    end
     def test_parses_from_string
       options = Service::Options.from('abc')
       assert_equal 'abc', options.required_host
