@@ -41,9 +41,9 @@ module Guillotine
     # required_host - Either a String or Regex limiting which domains the
     #                 shortened URLs can come from.
     #
-    def initialize(db, required_host = nil)
+    def initialize(db, value = nil)
       @db = db
-      @host_check = HostChecker.matching(required_host)
+      @options = Options.from(value)
     end
 
     # Public: Gets the full URL for a shortened code.
@@ -54,7 +54,7 @@ module Guillotine
     # or 404 on a miss.
     def get(code)
       if url = @db.find(code)
-        [302, {"Location" => @db.parse_url(url).to_s}]
+        [302, {"Location" => parse_url(url).to_s}]
       else
         [404, {}, "No url found for #{code}"]
       end
@@ -94,7 +94,7 @@ module Guillotine
       if url.scheme !~ /^https?$/
         [422, {}, "Invalid url: #{url}"]
       else
-        @host_check.call url
+        @options.host_checker.call url
       end
     end
 
@@ -107,11 +107,12 @@ module Guillotine
       if str.respond_to?(:scheme)
         str
       else
-        str = str.to_s
-        str.gsub! /\s/, ''
-        str.gsub! /(\#).*/, ''
-        Addressable::URI.parse str
+        parse_url(str)
       end
+    end
+
+    def parse_url(url)
+      @db.parse_url(url, @options)
     end
   end
 end
