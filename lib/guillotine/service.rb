@@ -3,6 +3,38 @@ module Guillotine
     # Deprecated until v2
     NullChecker = Guillotine::HostChecker
 
+    class Options < Struct.new(:required_host, :strip_query, :strip_anchor)
+      def self.from(value)
+        case value
+        when nil, "" then new
+        when String, Regexp then new(value)
+        when Hash then
+          opt = new
+          value.each do |key, value|
+            opt[key] = value
+          end
+          opt
+        when self then value
+        else
+          raise ArgumentError, "Unable to convert to Options: #{value.inspect}"
+        end
+      end
+
+      def strip_query?
+        strip_query != false
+      end
+
+      def strip_anchor?
+        strip_anchor != false
+      end
+
+      def host_checker
+        @host_checker ||= HostChecker.matching(required_host)
+      end
+    end
+
+    attr_reader :db, :options
+
     # This is the public API to the Guillotine service.  Wire this up to Sinatra
     # or whatever.  Every public method should return a compatible Rack Response:
     # [Integer Status, Hash headers, String body].
@@ -11,9 +43,9 @@ module Guillotine
     # required_host - Either a String or Regex limiting which domains the
     #                 shortened URLs can come from.
     #
-    def initialize(db, required_host = nil)
+    def initialize(db, value = nil)
       @db = db
-      @host_check = HostChecker.matching(required_host)
+      @options = Options.from(value)
     end
 
     # Public: Gets the full URL for a shortened code.
@@ -24,7 +56,7 @@ module Guillotine
     # or 404 on a miss.
     def get(code)
       if url = @db.find(code)
-        [302, {"Location" => @db.parse_url(url).to_s}]
+        [302, {"Location" => parse_url(url).to_s}]
       else
         [404, {}, "No url found for #{code}"]
       end
@@ -64,7 +96,7 @@ module Guillotine
       if url.scheme !~ /^https?$/
         [422, {}, "Invalid url: #{url}"]
       else
-        @host_check.call url
+        @options.host_checker.call url
       end
     end
 
@@ -77,11 +109,12 @@ module Guillotine
       if str.respond_to?(:scheme)
         str
       else
-        str = str.to_s
-        str.gsub! /\s/, ''
-        str.gsub! /(\#|\?).*/, ''
-        Addressable::URI.parse str
+        parse_url(str.to_s)
       end
+    end
+
+    def parse_url(url)
+      @db.parse_url(url, @options)
     end
   end
 end
