@@ -10,16 +10,18 @@ module Guillotine
 
     # Public: Stores the shortened version of a URL.
     #
-    # url  - The String URL to shorten and store.
-    # code - Optional String code for the URL.
+    # url     - The String URL to shorten and store.
+    # code    - Optional String code for the URL.
+    # options - Optional Guillotine::Service::Options
     #
     # Returns the unique String code for the URL.  If the URL is added
     # multiple times, this should return the same code.
-    def add(url, code = nil)
+    def add(url, code = nil, options = nil)
       if row = Url.select(:code).where(:url => url).first
         row[:code]
       else
-        code ||= shorten url
+        code = get_code(url, code, options)
+
         begin
           Url.create :url => url, :code => code
         rescue ActiveRecord::RecordNotUnique, ActiveRecord::StatementInvalid

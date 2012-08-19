@@ -1,0 +1,10 @@
+{
+  "url_shortener":{
+      "urls":{
+        "comparator_type":"org.apache.cassandra.db.marshal.UTF8Type",
+        "column_type":"Standard"},
+      "codes":{
+        "comparator_type":"org.apache.cassandra.db.marshal.UTF8Type",
+        "column_type":"Standard"}
+    }
+}

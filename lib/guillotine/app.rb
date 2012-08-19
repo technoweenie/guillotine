@@ -6,6 +6,13 @@ module Guillotine
   class App < Sinatra::Base
     set :service, nil
 
+    get "/" do
+      if params[:code].nil?
+        default_url = settings.service.default_url
+        redirect default_url if !default_url.nil?
+      end
+    end
+
     get "/:code" do
       escaped = Addressable::URI.escape(params[:code])
       status, head, body = settings.service.get(escaped)

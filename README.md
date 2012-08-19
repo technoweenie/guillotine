@@ -50,7 +50,7 @@ require 'guillotine'
 require 'sequel'
 module MyApp
   class App < Guillotine::App
-    db = Sequel.sqlite 
+    db = Sequel.sqlite
     adapter = Guillotine::Adapters::SequelAdapter.new(db)
     set :service => Guillotine::Service.new(adapter)
   end
@@ -104,6 +104,41 @@ module MyApp
     set :service => Guillotine::Service.new(adapter)
   end
 end
+```
+
+## Cassandra
+
+you can use Cassandra!
+
+```ruby
+require 'guillotine'
+require 'cassandra'
+
+module MyApp
+  class App < Guillotine::App
+    cassandra = Cassandra.new('url_shortener', '127.0.0.1:9160')
+    adapter = Guillotine::Adapters::CassandraAdapter.new(cassandra)
+
+    set :service => Guillotine::Service.new(adapter)
+  end
+end
+```
+
+You need to create keyspace and column families as below
+
+```sql
+CREATE KEYSPACE url_shortener;
+USE url_shortener;
+
+CREATE COLUMN FAMILY urls
+WITH comparator = UTF8Type
+AND key_validation_class=UTF8Type
+AND column_metadata = [{column_name: code, validation_class: UTF8Type}];
+
+CREATE COLUMN FAMILY codes
+WITH comparator = UTF8Type
+AND key_validation_class=UTF8Type
+AND column_metadata = [{column_name: url, validation_class: UTF8Type}];
 ```
 
 ## Domain Restriction
