@@ -152,15 +152,15 @@ module MyApp
     adapter = Guillotine::Adapters::MemoryAdapter.new
     # only this domain
     set :service => Guillotine::Service.new(adapter,
-      'github.com')
+      :required_host => 'github.com')
 
     # or, any *.github.com domain
     set :service => Guillotine::Service.new(adapter,
-      /(^|\.)github\.com$/)
+      :required_host => /(^|\.)github\.com$/)
 
     # or set a simple wildcard
     set :service => Guillotine::Servicew.new(adapter,
-      '*.github.com')
+      :required_host => '*.github.com')
   end
 end
 ```

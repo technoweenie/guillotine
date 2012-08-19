@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'guillotine'
-  s.version           = '1.2.1'
-  s.date              = '2012-07-02'
+  s.version           = '1.3.0'
+  s.date              = '2012-08-19'
   s.rubyforge_project = 'guillotine'
 
   ## Make sure your summary is short. The description may be as long
@@ -52,6 +52,7 @@ Gem::Specification.new do |s|
     LICENSE
     README.md
     Rakefile
+    config/cassandra_config.json
     config/haproxy.riak.cfg
     guillotine.gemspec
     lib/guillotine.rb
@@ -73,6 +74,7 @@ Gem::Specification.new do |s|
     test/host_checker_test.rb
     test/memory_adapter_test.rb
     test/mongo_adapter_test.rb
+    test/options_test.rb
     test/redis_adapter_test.rb
     test/riak_adapter_test.rb
     test/sequel_adapter_test.rb
