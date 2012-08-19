@@ -168,6 +168,18 @@ module Guillotine
       end
     end
 
+    def test_get_without_code_returns_default_url
+      with_service :default_url => 'http://google.com' do
+        get '/'
+        assert_equal "http://google.com", last_response.headers['location']
+      end
+    end
+
+    def test_get_without_code_no_default_url
+      get '/'
+      assert_equal nil, last_response.headers['location']
+    end
+
     def app
       App
     end

@@ -1,16 +1,11 @@
-require 'mongo'
-
 module Guillotine
-  class MongoAdapter < Adapter
-    def initialize(collection)
-      @collection = collection
-      @collection.ensure_index([['url',  Mongo::ASCENDING]])
-
-      # \m/
-      @transformers = {
-        :url => lambda { |doc| doc['url'] },
-        :code => lambda { |doc| doc['_id'] }
-      }
+  class CassandraAdapter < Adapter
+    # Public: Initialise the adapter with a Redis instance.
+    #
+    # cassandra - A Cassandra instance to persist urls and codes to.
+    def initialize(cassandra, read_only = false)
+      @cassandra = cassandra
+      @read_only = read_only
     end
 
     # Public: Stores the shortened version of a URL.
@@ -22,9 +17,20 @@ module Guillotine
     # Returns the unique String code for the URL.  If the URL is added
     # multiple times, this should return the same code.
     def add(url, code = nil, options = nil)
-      code_for(url) || insert(url, get_code(url, code, options))
-    end
+      return if @read_only
+      if existing_code = code_for(url)
+        existing_code
+      else
+        code = get_code(url, code, options)
 
+        if existing_url = find(code)
+          raise DuplicateCodeError.new(existing_url, url, code) if url != existing_url
+        end
+        @cassandra.insert("codes", code, 'url' => url)
+        @cassandra.insert("urls", url, 'code' => code)
+        code
+      end
+    end
 
     # Public: Retrieves a URL from the code.
     #
@@ -32,7 +38,8 @@ module Guillotine
     #
     # Returns the String URL, or nil if none is found.
     def find(code)
-      select(:url, :_id => code)
+      obj = @cassandra.get("codes", code)
+      obj.nil? ? nil : obj["url"]
     end
 
     # Public: Retrieves the code for a given URL.
@@ -41,7 +48,8 @@ module Guillotine
     #
     # Returns the String code, or nil if none is found.
     def code_for(url)
-      select(:code, :url => url)
+      obj = @cassandra.get("urls", url)
+      obj.nil? ? nil : obj["code"]
     end
 
     # Public: Removes the assigned short code for a URL.
@@ -50,21 +58,10 @@ module Guillotine
     #
     # Returns nothing.
     def clear(url)
-      @collection.remove(:url => url)
-    end
-
-    def select(field, query)
-      @collection.find_one(query, {:transformer => @transformers[field]})
-    end
-
-  private
-    def insert(url, code)
-      if existing_url = find(code)
-        raise DuplicateCodeError.new(existing_url, url, code) if url != existing_url
+      if code = code_for(url)
+        @cassandra.remove("urls", url)
+        @cassandra.remove("codes", code)
       end
-      @collection.insert(:_id => code, :url => url)
-      code
     end
   end
 end
-

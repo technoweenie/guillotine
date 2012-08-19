@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   ## the sub! line in the Rakefile
   s.name              = 'guillotine'
   s.version           = '1.2.1'
-  s.date              = '2012-06-04'
+  s.date              = '2012-07-02'
   s.rubyforge_project = 'guillotine'
 
   ## Make sure your summary is short. The description may be as long
@@ -56,6 +56,7 @@ Gem::Specification.new do |s|
     guillotine.gemspec
     lib/guillotine.rb
     lib/guillotine/adapters/active_record_adapter.rb
+    lib/guillotine/adapters/cassandra_adapter.rb
     lib/guillotine/adapters/memory_adapter.rb
     lib/guillotine/adapters/mongo_adapter.rb
     lib/guillotine/adapters/redis_adapter.rb
@@ -67,6 +68,7 @@ Gem::Specification.new do |s|
     script/cibuild
     test/active_record_adapter_test.rb
     test/app_test.rb
+    test/cassandra_adapter_test.rb
     test/helper.rb
     test/host_checker_test.rb
     test/memory_adapter_test.rb
