@@ -85,7 +85,7 @@ module Guillotine
 
       begin
         if code = @db.add(url.to_s, code, @options)
-          [201, {"Location" => code}]
+          [201, {"Location" => code}, url]
         else
           [422, {}, "Unable to shorten #{url}"]
         end
