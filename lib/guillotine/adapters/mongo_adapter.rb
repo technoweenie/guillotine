@@ -53,6 +53,15 @@ module Guillotine
       @collection.remove(:url => url)
     end
 
+    # Public: Removes the assigned short code.
+    #
+    # code - The String code to remove.
+    #
+    # Returns nothing.
+    def clear_code(code)
+      @collection.remove(:_id => code)
+    end
+
     def select(field, query)
       @collection.find_one(query, {:transformer => @transformers[field]})
     end

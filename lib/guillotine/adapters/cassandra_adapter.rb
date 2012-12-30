@@ -59,9 +59,24 @@ module Guillotine
     # Returns nothing.
     def clear(url)
       if code = code_for(url)
-        @cassandra.remove("urls", url)
-        @cassandra.remove("codes", code)
+        purge(code, url)
       end
+    end
+
+    # Public: Removes the assigned short code.
+    #
+    # code - The String code to remove.
+    #
+    # Returns nothing.
+    def clear_code(url)
+      if url = find(code)
+        purge(code, url)
+      end
+    end
+
+    def purge(code, url)
+      @cassandra.remove("urls", url)
+      @cassandra.remove("codes", code)
     end
   end
 end

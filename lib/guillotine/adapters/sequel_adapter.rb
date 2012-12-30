@@ -58,6 +58,15 @@ module Guillotine
       @table.where(:url => url).delete
     end
 
+    # Public: Removes the assigned short code.
+    #
+    # code - The String code to remove.
+    #
+    # Returns nothing.
+    def clear_code(code)
+      @table.where(:code => code).delete
+    end
+
     def setup
       @db.create_table :urls do
         String :url

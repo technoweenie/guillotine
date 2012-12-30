@@ -55,9 +55,24 @@ module Guillotine
     # Returns nothing.
     def clear(url)
       if code = @redis.get(url_key(url))
-        @redis.del url_key(url)
-        @redis.del code_key(code)
+        purge(code, url)
       end
+    end
+
+    # Public: Removes the assigned short code.
+    #
+    # code - The String code to remove.
+    #
+    # Returns nothing.
+    def clear_code(code)
+      if url = find(code)
+        purge(code, url)
+      end
+    end
+
+    def purge(code, url)
+      @redis.del url_key(url)
+      @redis.del code_key(code)
     end
 
     def code_key(code)

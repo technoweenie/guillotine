@@ -84,6 +84,18 @@ module Guillotine
       end
     end
 
+    # Public: Removes the assigned short code.
+    #
+    # code - The String code to remove.
+    #
+    # Returns nothing.
+    def clear_code(code)
+      if url_obj = url_object(code)
+        @url_bucket.delete url_key(url_obj.data)
+        @code_bucket.delete url_obj.key
+      end
+    end
+
     # Retrieves a URL riak value from the code.
     #
     # code - The String code to lookup the URL.

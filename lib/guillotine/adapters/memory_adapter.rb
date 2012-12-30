@@ -58,6 +58,17 @@ module Guillotine
       end
     end
 
+    # Public: Removes the assigned short code.
+    #
+    # code - The String code to remove.
+    #
+    # Returns nothing.
+    def clear_code(code)
+      if url = @hash.delete(code)
+        @urls.delete(url)
+      end
+    end
+
     def reset
       @hash = {}
       @urls = {}
