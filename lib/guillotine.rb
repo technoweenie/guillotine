@@ -3,7 +3,7 @@ require 'digest/md5'
 require 'addressable/uri'
 
 module Guillotine
-  VERSION = "1.3.0"
+  VERSION = "1.4.0"
 
   class Error < StandardError
   end

@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'guillotine'
-  s.version           = '1.3.0'
-  s.date              = '2012-08-19'
+  s.version           = '1.4.0'
+  s.date              = '2012-12-30'
   s.rubyforge_project = 'guillotine'
 
   ## Make sure your summary is short. The description may be as long
