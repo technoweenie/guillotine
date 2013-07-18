@@ -4,8 +4,8 @@ module Guillotine
   class ActiveRecordAdapter < Adapter
     class Url < ActiveRecord::Base; end
 
-    def initialize(config)
-      Url.establish_connection config
+    def initialize(config=nil)
+      Url.establish_connection config if config
     end
 
     # Public: Stores the shortened version of a URL.
