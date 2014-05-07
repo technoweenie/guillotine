@@ -94,8 +94,8 @@ module Guillotine
       assert_equal url, last_response.headers['Location']
     end
 
-    def test_adds_url_with_custom_code
-      url = 'http://github.com/abc'
+    def test_adds_url_with_custom_encoded_code
+      url = 'http://github.com/def'
       post '/', :url => url, :code => '%E2%9C%88'
       assert code_url = last_response.headers['Location']
       assert_match /\/%E2%9C%88$/, code_url
@@ -192,4 +192,3 @@ module Guillotine
     end
   end
 end
-
