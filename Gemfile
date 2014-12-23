@@ -14,7 +14,7 @@ if ENV['TRAVIS']
   gem 'redis'
   gem 'mongo'
   gem 'bson_ext'
-  gem 'riak-client'
+  gem 'riak-client', '~> 1.4.0'
 end
 
 # Bundler isn't designed to provide optional functionality like this.  You're
@@ -35,4 +35,3 @@ end
 #group :sequel, :active_record do
 #  gem 'sqlite3'
 #end
-
