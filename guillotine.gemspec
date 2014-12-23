@@ -40,7 +40,7 @@ Gem::Specification.new do |s|
 
   ## List your development dependencies here. Development dependencies are
   ## those that are only needed during development
-  s.add_development_dependency('rack-test')
+  s.add_development_dependency('rack-test', '~> 0.6.0')
 
   ## Leave this section as-is. It will be automatically generated from the
   ## contents of your Git repository via the gemspec task. DO NOT REMOVE
@@ -86,4 +86,3 @@ Gem::Specification.new do |s|
   ## matches what you actually use.
   s.test_files = s.files.select { |path| path =~ /^test\/.*_test\.rb/ }
 end
-

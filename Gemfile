@@ -4,10 +4,6 @@ gemspec
 
 gem 'rake'
 
-group :test do
-  gem 'rack-test'
-end
-
 if ENV['TRAVIS']
   gem 'sequel'
   gem 'sqlite3'
