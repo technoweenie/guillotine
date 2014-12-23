@@ -14,7 +14,7 @@ if ENV['TRAVIS']
   gem 'redis'
   gem 'mongo'
   gem 'bson_ext'
-  gem 'riak-client', '~> 1.4.0'
+  gem 'riak-client', '~> 0.9.0'
 end
 
 # Bundler isn't designed to provide optional functionality like this.  You're
