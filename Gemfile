@@ -4,17 +4,13 @@ gemspec
 
 gem 'rake'
 
-group :test do
-  gem 'rack-test'
-end
-
 if ENV['TRAVIS']
   gem 'sequel'
   gem 'sqlite3'
   gem 'redis'
   gem 'mongo'
   gem 'bson_ext'
-  gem 'riak-client'
+  gem 'riak-client', '~> 0.9.0'
 end
 
 # Bundler isn't designed to provide optional functionality like this.  You're
@@ -35,4 +31,3 @@ end
 #group :sequel, :active_record do
 #  gem 'sqlite3'
 #end
-
