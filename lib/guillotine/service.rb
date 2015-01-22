@@ -18,7 +18,7 @@ module Guillotine
             opt[key] = value
           end
           opt
-        when self then value
+        when Options then value
         else
           raise ArgumentError, "Unable to convert to Options: #{value.inspect}"
         end

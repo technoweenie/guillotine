@@ -123,6 +123,115 @@ module Guillotine
       assert_equal 201, status
     end
 
+    def test_options_from_nil
+      options = Service::Options.from(nil)
+      assert_nil options.required_host
+      assert_nil options.strip_query
+      assert_nil options.strip_anchor
+      assert_nil options.length
+      assert_nil options.charset
+      assert_nil options.default_url
+    end
+
+    def test_options_from_empty_string
+      options = Service::Options.from("")
+      assert_nil options.required_host
+      assert_nil options.strip_query
+      assert_nil options.strip_anchor
+      assert_nil options.length
+      assert_nil options.charset
+      assert_nil options.default_url
+    end
+
+    def test_options_from_string
+      options = Service::Options.from("ok")
+      assert_equal "ok", options.required_host
+      assert_nil options.strip_query
+      assert_nil options.strip_anchor
+      assert_nil options.length
+      assert_nil options.charset
+      assert_nil options.default_url
+    end
+
+    def test_options_from_hash
+      options = Service::Options.from(
+        :required_host => "ok",
+        :strip_query => "a",
+        :strip_anchor => "b",
+        :length => "c",
+        :charset => "d",
+        :default_url => "e"
+      )
+      assert_equal "ok", options.required_host
+      assert_equal "a", options.strip_query
+      assert_equal "b", options.strip_anchor
+      assert_equal "c", options.length
+      assert_equal "d", options.charset
+      assert_equal "e", options.default_url
+    end
+
+    def test_options_from_options
+      options = Service::Options.from(
+        :required_host => "ok",
+        :strip_query => "a",
+        :strip_anchor => "b",
+        :length => "c",
+        :charset => "d",
+        :default_url => "e"
+      )
+
+      options = Service::Options.from(options)
+
+      assert_equal "ok", options.required_host
+      assert_equal "a", options.strip_query
+      assert_equal "b", options.strip_anchor
+      assert_equal "c", options.length
+      assert_equal "d", options.charset
+      assert_equal "e", options.default_url
+    end
+
+    def test_options_from_options_sub_class
+      klass = Class.new(Service::Options)
+      options = klass.from(
+        :required_host => "ok",
+        :strip_query => "a",
+        :strip_anchor => "b",
+        :length => "c",
+        :charset => "d",
+        :default_url => "e"
+      )
+
+      options = Service::Options.from(options)
+
+      assert_equal "ok", options.required_host
+      assert_equal "a", options.strip_query
+      assert_equal "b", options.strip_anchor
+      assert_equal "c", options.length
+      assert_equal "d", options.charset
+      assert_equal "e", options.default_url
+    end
+
+    def test_options_to_options_sub_class
+      klass = Class.new(Service::Options)
+      options = Service::Options.from(
+        :required_host => "ok",
+        :strip_query => "a",
+        :strip_anchor => "b",
+        :length => "c",
+        :charset => "d",
+        :default_url => "e"
+      )
+
+      options = klass.from(options)
+
+      assert_equal "ok", options.required_host
+      assert_equal "a", options.strip_query
+      assert_equal "b", options.strip_anchor
+      assert_equal "c", options.length
+      assert_equal "d", options.charset
+      assert_equal "e", options.default_url
+    end
+
     def test_fixed_charset_code
       @db = MemoryAdapter.new
       length = 4
@@ -141,4 +250,3 @@ module Guillotine
     end
   end
 end
-
