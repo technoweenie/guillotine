@@ -91,6 +91,7 @@ module Guillotine
   end
 
   dir = File.expand_path '../guillotine/adapters', __FILE__
+  autoload :TransitionAdapter,   dir + "/transition_adapter"
   autoload :MemoryAdapter,       dir + "/memory_adapter"
   autoload :SequelAdapter,       dir + "/sequel_adapter"
   autoload :RiakAdapter,         dir + "/riak_adapter"
