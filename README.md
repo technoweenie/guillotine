@@ -88,6 +88,12 @@ module MyApp
 end
 ```
 
+You can define a TTL (in seconds) for all the Redis keys with this adapter option
+
+```ruby
+adapter = Guillotine::Adapters::RedisAdapter.new(redis, { :expire => 3600 })
+```
+
 ## Riak
 
 If you need to scale out your url shortening services across the cloud,
