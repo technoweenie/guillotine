@@ -3,8 +3,11 @@ module Guillotine
     # Public: Initialise the adapter with a Redis instance.
     #
     # redis - A Redis instance to persist urls and codes to.
-    def initialize(redis)
+    # options - An optionnal Redis option hash :
+    #   { :expire => 3600 } - Set a 3600 seconds TTL to all the Redis keys
+    def initialize(redis, options = {})
       @redis = redis
+      @options = options
     end
 
     # Public: Stores the shortened version of a URL.
@@ -24,8 +27,9 @@ module Guillotine
         if existing_url = @redis.get(code_key(code))
           raise DuplicateCodeError.new(existing_url, url, code) if url != existing_url
         end
-        @redis.set code_key(code), url
-        @redis.set url_key(url), code
+
+        @redis.set code_key(code), url, redis_options
+        @redis.set url_key(url), code, redis_options
         code
       end
     end
@@ -81,6 +85,10 @@ module Guillotine
 
     def url_key(url)
       "guillotine:urls:#{url}"
+    end
+
+    def redis_options
+      @options[:expire] ? { :ex => @options[:expire] } : {}
     end
   end
 end
