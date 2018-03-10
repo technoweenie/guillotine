@@ -35,8 +35,8 @@ Gem::Specification.new do |s|
 
   ## List your runtime dependencies here. Runtime dependencies are those
   ## that are needed for an end user to actually USE your code.
-  s.add_dependency('sinatra', "~> 1.4.0")
-  s.add_dependency('addressable', "~> 2.3.0")
+  s.add_dependency('sinatra', "~> 1.4")
+  s.add_dependency('addressable', "~> 2.3")
 
   ## List your development dependencies here. Development dependencies are
   ## those that are only needed during development
