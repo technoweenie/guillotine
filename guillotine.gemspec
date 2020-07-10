@@ -15,7 +15,6 @@ Gem::Specification.new do |s|
   s.name              = 'guillotine'
   s.version           = '1.4.2'
   s.date              = '2015-01-22'
-  s.rubyforge_project = 'guillotine'
 
   ## Make sure your summary is short. The description may be as long
   ## as you like.
