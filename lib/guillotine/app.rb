@@ -33,7 +33,7 @@ module Guillotine
     # /<|>/.  Broken tie fighter :(  If you're passing these characters in,
     # you're probably doing something naughty.
     def simple_escape(s)
-      s = s.to_s
+      s = s.nil? ? '' : s.to_s
       s.gsub! /<|>/, ''
       s
     end
