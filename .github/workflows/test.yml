@@ -12,7 +12,12 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest ]
-        ruby: [ 2.1, 2.2., 2.3, 2.4, 2.5, 2.6, 2.7, ruby-head, jruby, truffleruby ]
+        ruby: [ 2.1, 2.2., 2.3, 2.4, 2.5, 2.6, 2.7, ruby-head, truffleruby ]
+        include:
+        - { ruby: jruby-9.1,        allow-failure: true }
+        - { ruby: jruby,            allow-failure: true }
+        - { ruby: jruby-head,       allow-failure: true }
+        - { ruby: truffleruby-head, allow-failure: true }
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
@@ -20,4 +25,11 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
+
     - run: bundle exec rake test
+      id: test
+      continue-on-error: ${{ matrix.allow-failure || false }}
+
+    - name: >-
+        Test outcome: ${{ steps.test.outcome }}
+      run: echo every step must define a "uses" or "run" key
