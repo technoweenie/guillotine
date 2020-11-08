@@ -1,8 +1,9 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 gemspec
 
 gem 'rake'
+gem 'test-unit'
 
 if ENV['TRAVIS']
   gem 'sequel'
