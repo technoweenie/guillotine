@@ -1,0 +1,23 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+  schedule:
+  - cron:  '0 0 1 * *' # at 00:00 on the 1st of every month
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        ruby: [ 2.1, 2.2., 2.3, 2.4, 2.5, 2.6, 2.7, ruby-head, jruby, truffleruby ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true
+    - run: rake test
