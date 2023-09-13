@@ -98,7 +98,7 @@ module Guillotine
     #
     # code - String code to use.
     #
-    # Returns 201 with the Location pointing to the removed URL, or 422.
+    # Returns 200.
     def delete(code)
       @db.clear_code(code)
 
