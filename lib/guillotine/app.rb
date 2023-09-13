@@ -29,6 +29,12 @@ module Guillotine
       [status, head, simple_escape(body)]
     end
 
+    delete "/:code" do
+      status, head, body = settings.service.delete(params[:code])
+
+      [status, head, simple_escape(body)]
+    end
+
     # Guillotine output is supposed to be text/plain friendly, so only strip
     # /<|>/.  Broken tie fighter :(  If you're passing these characters in,
     # you're probably doing something naughty.

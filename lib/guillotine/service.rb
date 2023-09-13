@@ -94,6 +94,17 @@ module Guillotine
       end
     end
 
+    # Public: Removes a shortened code and its URL.
+    #
+    # code - String code to use.
+    #
+    # Returns 201 with the Location pointing to the removed URL, or 422.
+    def delete(code)
+      @db.clear_code(code)
+
+      [200, {}, "#{code} removed"]
+    end
+
     # Checks to see if the input URL is using a valid host.  You can constrain
     # the hosts with the `required_host` argument of the Service constructor.
     #
