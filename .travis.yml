@@ -1,5 +1,0 @@
-rvm: 1.9.3
-services:
-  - redis-server
-  - riak
-  - mongodb
