@@ -11,16 +11,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [ 3.2, ruby-head ]
+        ruby: [ 3.2, 3.3, ruby-head ]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
 
-    - run: bundle exec rake test
+    - run: bundle exec rake
       id: test
       continue-on-error: ${{ matrix.allow-failure || false }}
 
